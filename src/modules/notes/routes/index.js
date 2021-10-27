@@ -5,6 +5,7 @@ import { getNotes, addNote, deleteNote, updateNote } from '../controllers';
 
 import connect from 'db/connection/connect';
 import commonErrorHandler from 'errors/handlers/commonErrorHandler';
+import internalErrorHandler from 'errors/handlers/internalErrorHandler';
 
 const notesRouter = express.Router();
 
@@ -18,6 +19,6 @@ notesRouter.put('/:id', updateNoteValidations, updateNote);
 
 notesRouter.delete('/:id', deleteNote);
 
-notesRouter.use(commonErrorHandler);
+notesRouter.use([commonErrorHandler, internalErrorHandler]);
 
 export default notesRouter;

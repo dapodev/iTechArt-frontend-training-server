@@ -1,9 +1,12 @@
 import {
+  EMAIL_PATTERN,
   ID_PATTERN,
   MAX_DESCRIPTION_LENGTH,
   MIN_DESCRIPTION_LENGTH,
   MIN_TITLE_LENGTH,
-} from './constants';
+  NAME_PATTERN,
+  PASSWORD_PATTERN,
+} from 'modules/notes/validations/constants';
 
 export const generateErrors = () => {
   const errors = {};
@@ -104,6 +107,56 @@ export const validateDate = (dateString, required = false) => {
       result.isValid = false;
       result.message = 'Could not convert date value.';
     }
+  }
+
+  return result;
+};
+
+export const validateEmail = (email) => {
+  const result = generateValidationResult();
+
+  if (typeof email === 'string') {
+    const isValidEmail = EMAIL_PATTERN.test(email);
+
+    result.isValid = isValidEmail;
+    result.message = isValidEmail ? '' : 'Provided email has incorrect format.';
+  } else {
+    result.isValid = false;
+    result.message = 'Email is not provided or can not be resolved.';
+  }
+
+  return result;
+};
+
+export const validateName = (name) => {
+  const result = generateValidationResult();
+
+  if (typeof name === 'string') {
+    const isValidName = NAME_PATTERN.test(name);
+
+    result.isValid = isValidName;
+    result.message = isValidName ? '' : 'Provided name has incorrect format.';
+  } else {
+    result.isValid = false;
+    result.message = 'Name is not provided or can not be resolved.';
+  }
+
+  return result;
+};
+
+export const validatePassword = (password) => {
+  const result = generateValidationResult();
+
+  if (typeof password === 'string') {
+    const isValidPassword = PASSWORD_PATTERN.test(password);
+
+    if (!isValidPassword) {
+      result.isValid = false;
+      result.message = 'Provided password either too short or too weak.';
+    }
+  } else {
+    result.isValid = false;
+    result.message = 'Password is not provided or can not be resolved.';
   }
 
   return result;

@@ -6,6 +6,7 @@ const STATUS_CODES = {
     INVALID_REQUEST: 400,
   },
   serverErrors: {
+    INTERNAL_ERROR: 500,
     SERVICE_UNAVAILABLE: 503,
   },
 };

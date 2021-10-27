@@ -1,4 +1,4 @@
-import { ID_PATTERN } from '../modules/notes/validations/constants';
+import { ID_PATTERN } from 'modules/notes/validations/constants';
 
 export const isInteger = (value) => {
   switch (typeof value) {
@@ -23,3 +23,15 @@ export const isDate = (value) => {
   }
   return isCorrect;
 };
+
+export const isEmail = (email) => {
+  let isCorrectEmail = true;
+
+  if(typeof email === 'string') {
+
+  } else {
+    isCorrectEmail = false;
+  }
+
+  return isCorrect
+}

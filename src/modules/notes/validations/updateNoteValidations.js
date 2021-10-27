@@ -1,11 +1,12 @@
 import STATUS_CODES from '../../config/constants/statusCodes';
+
 import {
   generateErrors,
   validateId,
   validateTitle,
   validateDescription,
   validateDate,
-} from './common';
+} from 'utils/validations/common';
 
 const updateNoteValidations = (req, res, next) => {
   const errors = generateErrors();
