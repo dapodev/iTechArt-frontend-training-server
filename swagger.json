@@ -1,0 +1,238 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.1",
+    "title": "iTechArt ReactJS training server",
+    "description": "This NodeJS API was created to provide backend part for your ReactJS note application.",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "note-app-training-server.herokuapp.com",
+  "basePath": "/",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+
+  "paths": {
+    "/api/notes": {
+      "get": {
+        "tags": ["Notes"],
+        "summary": "Get one page of notes from DB.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Number of page of notes that we want to ger from the server. Default value: 1",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Part(or the whole title) of note title that you want to get notes by. This parameter is used to filter notes by their title",
+            "type": "string"
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "required": false,
+            "description": "A date value represented as a string. This parameter is used to filter note by creation date.",
+            "type": "string"
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "required": false,
+            "description": "A date value represented as a string. This parameter is used to filter note by creation date.",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Note"
+            }
+          },
+          "400": {
+            "description": "Invalid Request"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Notes"],
+        "summary": "Add a new note to DB.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that represents the note you want to add to database.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/definitions/Note"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Note"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/BodyContentError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/notes/{id}": {
+      "put": {
+        "tags": ["Notes"],
+        "summary": "Update some note values using ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A note you want to update ID value.",
+            "type": "integer"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that represents the new valuse of the note you want yo update in database.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/UpdateNoteBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/definitions/Note"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/BodyContentError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Notes"],
+        "summary": "Delete particular note by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the note you want to mark as deleted.",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/DeleteNoteResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request"
+          }
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "Note": {
+      "required": ["id", "title", "description", "createdAt"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "uniqueItems": true
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "commonDefinitions": {
+    "UpdateNoteBody": {
+      "required": ["title", "description", "createdAt"],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "BodyContentError": {
+      "required": ["hasErrors"],
+      "properties": {
+        "hasErrors": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "createdAt": {
+          "type": "string"
+        },
+        "updatedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "DeleteNoteResponseBody": {
+      "required": ["success", "id"],
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "integer"
+        }
+      }
+    }
+  }
+}

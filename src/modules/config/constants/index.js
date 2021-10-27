@@ -1,0 +1,3 @@
+const PAGINATION_SIZE = 5;
+
+export { PAGINATION_SIZE };
