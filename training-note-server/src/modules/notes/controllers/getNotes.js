@@ -6,14 +6,20 @@ import { isInteger } from 'utils/typeChecks';
 
 const getNotes = async (req, res, next) => {
   const { page = 1 } = req.query;
+  const { user } = req.params;
 
   const { dateFrom, dateTo, name } = req.query;
   const filters = { dateFrom, dateTo, name };
 
+  // ! refactor with separate validations
   try {
     let parsedPageNumber = isInteger(page) ? parseInt(page) : -1;
     if (parsedPageNumber > 0) {
-      const notesPayload = await getNotesByPage(parsedPageNumber, filters);
+      const notesPayload = await getNotesByPage(
+        user,
+        parsedPageNumber,
+        filters
+      );
 
       res.json(notesPayload);
     } else {

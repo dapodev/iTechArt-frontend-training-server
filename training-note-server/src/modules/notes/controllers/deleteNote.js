@@ -5,14 +5,16 @@ import { isInteger } from 'utils/typeChecks';
 import { removeNote as deleteNoteProvider } from 'db/providers/notes';
 
 const deleteNote = async (req, res, next) => {
-  const { id } = req.params;
+  const { id, user } = req.params;
 
+  // ! add validations
   try {
     if (isInteger(id)) {
       const parsedId = parseInt(id);
       const responseBody = { success: true, id: parsedId };
+
       try {
-        await deleteNoteProvider(parsedId);
+        await deleteNoteProvider(user, parsedId);
       } catch {
         responseBody.success = false;
       } finally {
