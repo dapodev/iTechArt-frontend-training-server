@@ -2,6 +2,7 @@ import { insertNote as addNoteProvider } from 'db/providers/notes';
 
 const addNote = async (req, res, next) => {
   const { id, title, description, createdAt, updatedAt } = req.body;
+  const { user } = req.params;
 
   const note = {
     id: parseInt(id),
@@ -12,7 +13,8 @@ const addNote = async (req, res, next) => {
   };
 
   try {
-    const newNote = await addNoteProvider(note);
+    const newNote = await addNoteProvider(user, note);
+
     res.json(newNote);
   } catch (err) {
     next(err);

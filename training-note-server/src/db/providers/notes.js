@@ -1,9 +1,11 @@
 import Note from '../models/Note';
+import User from '../models/User';
 
 import STATUS_CODES from 'modules/config/constants/statusCodes';
 import { PAGINATION_SIZE } from 'modules/config/constants';
 import CommonError from 'errors/CommonError';
 import { isDate } from 'utils/typeChecks';
+import { findNoteById } from 'utils/notes';
 
 export const getAllNotes = async () => {
   return await Note.find({ deleted: false });
@@ -27,21 +29,37 @@ export const getNotesByPage = async (page, filters) => {
   return result;
 };
 
-export const insertNote = async (note) => {
-  const originNote = await Note.findOne({ id: note.id, deleted: false });
+export const insertNote = async (userEmail, note) => {
+  const user = await User.findOne({ email: userEmail });
 
   let insertedNote;
 
-  if (originNote) {
+  if (user) {
+    await user.populate('notes');
+
+    const originNote = findNoteById(user.notes, note.id);
+
+    if (originNote) {
+      throw new CommonError('Insert: note with provided ID already exists', STATUS_CODES.clientErrors.INVALID_REQUEST);
+    } else {
+      insertedNote = await Note.create(note);
+      await User.findOneAndUpdate(
+        { _id: user._id },
+        { $push: { notes: insertedNote._id } }
+      );
+    }
+  } else {
     throw new CommonError(
-      'Insert: ID already exists.',
+      'Insert: provided user email not found.',
       STATUS_CODES.clientErrors.INVALID_REQUEST
     );
-  } else {
-    insertedNote = await Note.create(note);
   }
 
-  return insertedNote;
+  const { id, title, description, createdAt, updatedAt } = insertedNote;
+
+  const newNoteValues = { id, title, description, createdAt, updatedAt };
+
+  return newNoteValues;
 };
 
 export const removeNote = async (id) => {

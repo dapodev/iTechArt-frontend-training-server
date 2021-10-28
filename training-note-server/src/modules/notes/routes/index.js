@@ -11,13 +11,13 @@ const notesRouter = express.Router();
 
 notesRouter.use(connect);
 
-notesRouter.get('/', getNotes);
+notesRouter.get('/:user', getNotes);
 
-notesRouter.post('/', addNoteValidations, addNote);
+notesRouter.post('/:user', addNoteValidations, addNote);
 
-notesRouter.put('/:id', updateNoteValidations, updateNote);
+notesRouter.put('/:user/:id', updateNoteValidations, updateNote);
 
-notesRouter.delete('/:id', deleteNote);
+notesRouter.delete('/:user/:id', deleteNote);
 
 notesRouter.use([commonErrorHandler, internalErrorHandler]);
 
