@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.0.1",
+    "version": "1.0.2",
     "title": "iTechArt ReactJS training server",
     "description": "This NodeJS API was created to provide backend part for your ReactJS note application.",
     "license": {
@@ -16,11 +16,18 @@
   "produces": ["application/json"],
 
   "paths": {
-    "/api/notes": {
+    "/api/notes/{user}": {
       "get": {
         "tags": ["Notes"],
         "summary": "Get one page of notes from DB.",
         "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "description": "User email.",
+            "type": "string"
+          },
           {
             "name": "page",
             "in": "query",
@@ -67,6 +74,13 @@
         "summary": "Add a new note to DB.",
         "parameters": [
           {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "description": "User email.",
+            "type": "string"
+          },
+          {
             "name": "body",
             "in": "body",
             "required": true,
@@ -94,11 +108,18 @@
       }
     },
 
-    "/api/notes/{id}": {
+    "/api/notes/{user}/{id}": {
       "put": {
         "tags": ["Notes"],
         "summary": "Update some note values using ID.",
         "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "description": "User email.",
+            "type": "string"
+          },
           {
             "name": "id",
             "in": "path",
@@ -137,6 +158,13 @@
         "summary": "Delete particular note by ID.",
         "parameters": [
           {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "description": "User email.",
+            "type": "string"
+          },
+          {
             "name": "id",
             "in": "path",
             "required": true,
@@ -149,6 +177,91 @@
             "description": "OK",
             "schema": {
               "$ref": "#/commonDefinitions/DeleteNoteResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request"
+          }
+        }
+      }
+    },
+
+    "api/users/": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users list.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "$ref": "#/commonDefinitions/PostUserBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request"
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Register a new user.",
+        "parameters": [
+          {
+            "name": "user",
+            "in": "path",
+            "required": true,
+            "description": "User email.",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that represents the note you want to add to database.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/PostUserBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "$ref": "#/commonDefinitions/PostUserBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request"
+          }
+        }
+      }
+    },
+
+    "api/users/auth": {
+      "post": {
+        "tags": ["Authentification"],
+        "summary": "Authentification attempt.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that represents the note you want to add to database.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/AuthBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "$ref": "#/commonDefinitions/PostUserBody"
             }
           },
           "400": {
@@ -178,6 +291,40 @@
         },
         "updatedAt": {
           "type": "string"
+        }
+      }
+    },
+    "User": {
+      "required": [
+        "email",
+        "password",
+        "firstName",
+        "lastName",
+        "birthday",
+        "notes"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "password": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Note"
+          }
         }
       }
     }
@@ -231,6 +378,38 @@
         },
         "id": {
           "type": "integer"
+        }
+      }
+    },
+    "PostUserBody": {
+      "required": ["email", "password", "firstName", "lastName", "birthday"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true
+        },
+        "password": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "birthday": {
+          "type": "string"
+        }
+      }
+    },
+    "AuthBody": {
+      "required": ["email", "password"],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
         }
       }
     }
