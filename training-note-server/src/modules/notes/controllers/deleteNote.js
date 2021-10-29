@@ -7,7 +7,7 @@ import { removeNote as deleteNoteProvider } from 'db/providers/notes';
 const deleteNote = async (req, res, next) => {
   const { id, user } = req.params;
 
-  // ! add validations
+  // ! add validations ! parsing !
   try {
     if (isInteger(id)) {
       const parsedId = parseInt(id);

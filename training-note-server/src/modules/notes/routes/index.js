@@ -1,6 +1,11 @@
 import express from 'express';
 
-import { addNoteValidations, updateNoteValidations } from '../validations';
+import {
+  addNoteValidations,
+  deleteNotesValidations,
+  getNotesValidations,
+  updateNoteValidations,
+} from '../validations';
 import { getNotes, addNote, deleteNote, updateNote } from '../controllers';
 
 import connect from 'db/connection/connect';
@@ -11,13 +16,13 @@ const notesRouter = express.Router();
 
 notesRouter.use(connect);
 
-notesRouter.get('/:user', getNotes);
+notesRouter.get('/:user', getNotesValidations, getNotes);
 
 notesRouter.post('/:user', addNoteValidations, addNote);
 
 notesRouter.put('/:user/:id', updateNoteValidations, updateNote);
 
-notesRouter.delete('/:user/:id', deleteNote);
+notesRouter.delete('/:user/:id', deleteNotesValidations, deleteNote);
 
 notesRouter.use([commonErrorHandler, internalErrorHandler]);
 

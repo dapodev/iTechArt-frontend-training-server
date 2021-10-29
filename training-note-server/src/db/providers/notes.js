@@ -85,33 +85,15 @@ export const removeNote = async (userEmail, id) => {
   const deletedNote = await Note.findOne({ _id: _id });
 
   return deletedNote;
-  // const noteToRemove = await Note.findOne({ id: id, deleted: false });
-
-  // if (noteToRemove) {
-  //   await Note.updateOne(
-  //     { id: noteToRemove.id, deleted: false },
-  //     {
-  //       deleted: true,
-  //     }
-  //   );
-  // } else {
-  //   throw new CommonError(
-  //     'Delete: No notes with provided ID found.',
-  //     STATUS_CODES.clientErrors.INVALID_REQUEST
-  //   );
-  // }
-
-  // return noteToRemove;
 };
 
-export const updateNote = async (id, data) => {
-  const originNote = await Note.findOne({ id: id, deleted: false });
+export const updateNote = async (userEmail, noteId, data) => {
+  const user = await getUserByEmail(userEmail);
+  const _id = await getObjectIdByUserNoteId(user, noteId);
 
-  let updatedNote;
-
-  if (originNote) {
+  if (_id) {
     await Note.updateOne(
-      { id: originNote.id, deleted: false },
+      { _id: _id, deleted: false },
       {
         title: data.title,
         description: data.description,
@@ -119,8 +101,6 @@ export const updateNote = async (id, data) => {
         updatedAt: data.updatedAt,
       }
     );
-
-    updatedNote = Note.findOne({ id: id, deleted: false });
   } else {
     throw new CommonError(
       'Update: No notes with provided ID found.',
@@ -128,7 +108,13 @@ export const updateNote = async (id, data) => {
     );
   }
 
-  return updatedNote;
+  const updatedNote = await Note.findOne({ id: noteId, deleted: false });
+
+  const { id, title, description, createdAt, updatedAt } = updatedNote;
+
+  const newNoteValues = { id, title, description, createdAt, updatedAt };
+
+  return newNoteValues;
 };
 
 const getNotesByUser = async (user, allFields = false) => {

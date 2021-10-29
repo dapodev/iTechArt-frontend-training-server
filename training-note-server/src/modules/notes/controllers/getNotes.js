@@ -15,11 +15,12 @@ const getNotes = async (req, res, next) => {
   try {
     let parsedPageNumber = isInteger(page) ? parseInt(page) : -1;
     if (parsedPageNumber > 0) {
-      const notesPayload = await getNotesByPage(
-        user,
-        parsedPageNumber,
-        filters
-      );
+      const notesPayload = (
+        await getNotesByPage(user, parsedPageNumber, filters)
+      ).map((note) => {
+        const { id, title, description, createdAt, updatedAt } = note;
+        return { id, title, description, createdAt, updatedAt };
+      });
 
       res.json(notesPayload);
     } else {
