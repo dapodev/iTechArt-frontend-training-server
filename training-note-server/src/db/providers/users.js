@@ -5,7 +5,9 @@ import STATUS_CODES from 'modules/config/constants/statusCodes';
 import { generateMD5fromString } from 'utils/hash';
 
 const getUserList = async () => {
-  const notes = await User.find({}).select("-_id email firstName lastName birthday password");
+  const notes = await User.find({}).select(
+    '-_id email firstName lastName birthday password'
+  );
 
   return notes;
 };
@@ -36,4 +38,17 @@ const addUser = async (user) => {
   return newUser;
 };
 
-export { getUserList, addUser };
+const getUserByEmail = async (userEmail) => {
+  const user = await User.findOne({ email: userEmail });
+
+  if (!user) {
+    throw new CommonError(
+      'User Search: could not find user with provided email.',
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
+  }
+
+  return user;
+};
+
+export { getUserList, addUser, getUserByEmail };

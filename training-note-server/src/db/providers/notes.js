@@ -1,5 +1,6 @@
 import Note from '../models/Note';
 import User from '../models/User';
+import { getUserByEmail } from './users';
 
 import STATUS_CODES from 'modules/config/constants/statusCodes';
 import CommonError from 'errors/CommonError';
@@ -131,19 +132,6 @@ const getNotesByUser = async (user, allFields = false) => {
       );
 
   return notes;
-};
-
-const getUserByEmail = async (userEmail) => {
-  const user = await User.findOne({ email: userEmail });
-
-  if (!user) {
-    throw new CommonError(
-      'User Search: could not find user with provided email.',
-      STATUS_CODES.clientErrors.INVALID_REQUEST
-    );
-  }
-
-  return user;
 };
 
 const getObjectIdByUserNoteId = async (user, id) => {
