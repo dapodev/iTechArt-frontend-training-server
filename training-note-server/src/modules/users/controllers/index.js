@@ -1,4 +1,4 @@
-import getAllNotes from './getAllNotes';
+import getAllUsers from './getAllUsers';
 import registerUser from './registerUser';
 
-export { getAllNotes, registerUser };
+export { getAllUsers, registerUser };

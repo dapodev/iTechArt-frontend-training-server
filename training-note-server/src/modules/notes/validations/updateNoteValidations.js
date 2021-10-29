@@ -6,13 +6,20 @@ import {
   validateTitle,
   validateDescription,
   validateDate,
+  validateEmail,
 } from 'utils/validations/common';
 
 const updateNoteValidations = (req, res, next) => {
   const errors = generateErrors();
 
   const { title, description, createdAt, updatedAt } = req.body;
-  const { id } = req.params;
+  const { id, user } = req.params;
+
+  const emailValidations = validateEmail(user);
+  if (!emailValidations.isValid) {
+    errors.hasErrors = true;
+    errors.user = emailValidations.message;
+  }
 
   const idValidation = validateId(id);
   if (!idValidation.isValid) {
