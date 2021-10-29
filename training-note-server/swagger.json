@@ -218,7 +218,7 @@
             "name": "body",
             "in": "body",
             "required": true,
-            "description": "An object that represents the note you want to add to database.",
+            "description": "An object that contains all the data about user.",
             "type": "object",
             "schema": {
               "$ref": "#/commonDefinitions/PostUserBody"
@@ -249,7 +249,7 @@
             "name": "body",
             "in": "body",
             "required": true,
-            "description": "An object that represents the note you want to add to database.",
+            "description": "An object which contains user's email and pasword.",
             "type": "object",
             "schema": {
               "$ref": "#/commonDefinitions/AuthBody"
