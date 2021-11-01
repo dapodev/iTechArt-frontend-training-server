@@ -1,6 +1,5 @@
 import Note from '../models/Note';
 import User from '../models/User';
-import { getUserByEmail } from './users';
 
 import STATUS_CODES from 'modules/config/constants/statusCodes';
 import CommonError from 'errors/CommonError';
@@ -8,16 +7,16 @@ import { PAGINATION_SIZE } from 'modules/config/constants';
 import { isDate } from 'utils/typeChecks';
 import { findNoteById } from 'utils/notes';
 
-export const getAllNotes = async (userEmail) => {
-  const user = await getUserByEmail(userEmail);
+export const getAllNotes = async (userData) => {
+  const user = userData;
 
   const notes = getNotesByUser(user);
 
   return notes;
 };
 
-export const getNotesByPage = async (userEmail, page, filters) => {
-  const user = await getUserByEmail(userEmail);
+export const getNotesByPage = async (userData, page, filters) => {
+  const user = userData;
 
   const _ids = (await getNotesByUser(user, true)).map((note) => note._id);
 
@@ -41,8 +40,8 @@ export const getNotesByPage = async (userEmail, page, filters) => {
   return resultNotes;
 };
 
-export const insertNote = async (userEmail, note) => {
-  const user = await getUserByEmail(userEmail);
+export const insertNote = async (userData, note) => {
+  const user = userData;
 
   let insertedNote;
 
@@ -69,8 +68,8 @@ export const insertNote = async (userEmail, note) => {
   return newNoteValues;
 };
 
-export const removeNote = async (userEmail, id) => {
-  const user = await getUserByEmail(userEmail);
+export const removeNote = async (userData, id) => {
+  const user = userData;
 
   const _id = await getObjectIdByUserNoteId(user, id);
 
@@ -88,8 +87,8 @@ export const removeNote = async (userEmail, id) => {
   return deletedNote;
 };
 
-export const updateNote = async (userEmail, noteId, data) => {
-  const user = await getUserByEmail(userEmail);
+export const updateNote = async (userData, noteId, data) => {
+  const user = userData;
   const _id = await getObjectIdByUserNoteId(user, noteId);
 
   if (_id) {
