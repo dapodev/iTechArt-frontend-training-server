@@ -11,10 +11,13 @@ import { getNotes, addNote, deleteNote, updateNote } from '../controllers';
 import connect from 'db/connection/connect';
 import commonErrorHandler from 'errors/handlers/commonErrorHandler';
 import internalErrorHandler from 'errors/handlers/internalErrorHandler';
+import userAuthorization from 'auth';
 
 const notesRouter = express.Router();
 
 notesRouter.use(connect);
+
+notesRouter.use(userAuthorization);
 
 notesRouter.get('/:user', getNotesValidations, getNotes);
 

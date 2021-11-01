@@ -23,11 +23,13 @@
     "@babel/plugin-transform-runtime": "^7.15.8",
     "@babel/preset-env": "^7.15.6",
     "babel-plugin-module-resolver": "^4.1.0",
+    "basic-auth": "^2.0.1",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
     "mongoose": "^6.0.11",
     "swagger-ui-express": "^4.1.6",
+    "tsscmp": "^1.0.6",
     "winston": "^3.3.3"
   },
   "devDependencies": {
