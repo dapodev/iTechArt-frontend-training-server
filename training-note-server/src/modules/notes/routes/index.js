@@ -19,13 +19,13 @@ notesRouter.use(connect);
 
 notesRouter.use(userAuthorization);
 
-notesRouter.get('/:user', getNotesValidations, getNotes);
+notesRouter.get('/', getNotesValidations, getNotes);
 
-notesRouter.post('/:user', addNoteValidations, addNote);
+notesRouter.post('/', addNoteValidations, addNote);
 
-notesRouter.put('/:user/:id', updateNoteValidations, updateNote);
+notesRouter.put('/:id', updateNoteValidations, updateNote);
 
-notesRouter.delete('/:user/:id', deleteNotesValidations, deleteNote);
+notesRouter.delete('/:id', deleteNotesValidations, deleteNote);
 
 notesRouter.use([commonErrorHandler, internalErrorHandler]);
 

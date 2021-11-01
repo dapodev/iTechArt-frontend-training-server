@@ -14,8 +14,12 @@ const userAuthorization = async (req, res, next) => {
         credentials.name,
         credentials.pass
       );
+
       if (accessGranted) {
-        request.next();
+        const userInfo = getUserByEmail(credentials.name);
+        res.locals.userData = userInfo;
+
+        req.next();
       } else {
         throw new CommonError(
           'Authorization error: invalid credentials',
