@@ -32,7 +32,7 @@
             "name": "page",
             "in": "query",
             "required": false,
-            "description": "Number of page of notes that we want to ger from the server. Default value: 1",
+            "description": "Sequence number of the page of notes that we want to get from the server. Default value: 1",
             "type": "integer"
           },
           {
