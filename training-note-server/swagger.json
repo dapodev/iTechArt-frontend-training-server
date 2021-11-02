@@ -21,9 +21,11 @@
     }
   },
 
-  "security": {
-    "basicAuth": []
-  },
+  "security": [
+    {
+      "basicAuth": []
+    }
+  ],
 
   "paths": {
     "/api/notes": {
@@ -205,7 +207,7 @@
       }
     },
 
-    "api/users/": {
+    "/api/users": {
       "get": {
         "tags": ["Users"],
         "summary": "Get all users list.",
@@ -231,6 +233,7 @@
       "post": {
         "tags": ["Users"],
         "summary": "Register a new user.",
+        "security": [],
         "parameters": [
           {
             "name": "body",
@@ -261,7 +264,7 @@
       }
     },
 
-    "api/users/auth": {
+    "/api/users/auth": {
       "get": {
         "tags": ["Authentification"],
         "summary": "Authentification attempt. Returns user info if auth sucessed or an error message otherwise.",

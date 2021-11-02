@@ -19,7 +19,7 @@ usersRouter.use(userAuthorization);
 
 usersRouter.get('/', getAllUsers);
 
-usersRouter.post('/auth', authentificateUser);
+usersRouter.get('/auth', authentificateUser);
 
 usersRouter.use([commonErrorHandler, internalErrorHandler]);
 
