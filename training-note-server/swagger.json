@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.0.3",
+    "version": "1.0.4",
     "title": "iTechArt ReactJS training server",
     "description": "This NodeJS API was created to provide backend part for your ReactJS note application.",
     "license": {
@@ -15,19 +15,22 @@
   "consumes": ["application/json"],
   "produces": ["application/json"],
 
+  "securityDefinitions": {
+    "basicAuth": {
+      "type": "basic"
+    }
+  },
+
+  "security": {
+    "basicAuth": []
+  },
+
   "paths": {
-    "/api/notes/{user}": {
+    "/api/notes": {
       "get": {
         "tags": ["Notes"],
         "summary": "Get one page of notes from DB.",
         "parameters": [
-          {
-            "name": "user",
-            "in": "path",
-            "required": true,
-            "description": "User email.",
-            "type": "string"
-          },
           {
             "name": "page",
             "in": "query",
@@ -65,7 +68,16 @@
             }
           },
           "400": {
-            "description": "Invalid Request"
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
           }
         }
       },
@@ -73,13 +85,6 @@
         "tags": ["Notes"],
         "summary": "Add a new note to DB.",
         "parameters": [
-          {
-            "name": "user",
-            "in": "path",
-            "required": true,
-            "description": "User email.",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -103,23 +108,22 @@
             "schema": {
               "$ref": "#/commonDefinitions/BodyContentError"
             }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
           }
         }
       }
     },
 
-    "/api/notes/{user}/{id}": {
+    "/api/notes/{id}": {
       "put": {
         "tags": ["Notes"],
         "summary": "Update some note values using ID.",
         "parameters": [
-          {
-            "name": "user",
-            "in": "path",
-            "required": true,
-            "description": "User email.",
-            "type": "string"
-          },
           {
             "name": "id",
             "in": "path",
@@ -149,6 +153,12 @@
             "description": "Invalid Request",
             "schema": {
               "$ref": "#/commonDefinitions/BodyContentError"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
             }
           }
         }
@@ -180,7 +190,16 @@
             }
           },
           "400": {
-            "description": "Invalid Request"
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
           }
         }
       }
@@ -200,6 +219,12 @@
           },
           "400": {
             "description": "Invalid Request"
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
           }
         }
       },
@@ -207,13 +232,6 @@
         "tags": ["Users"],
         "summary": "Register a new user.",
         "parameters": [
-          {
-            "name": "user",
-            "in": "path",
-            "required": true,
-            "description": "User email.",
-            "type": "string"
-          },
           {
             "name": "body",
             "in": "body",
@@ -234,28 +252,19 @@
             }
           },
           "400": {
-            "description": "Invalid Request"
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/AddUserBodyError"
+            }
           }
         }
       }
     },
 
     "api/users/auth": {
-      "post": {
+      "get": {
         "tags": ["Authentification"],
-        "summary": "Authentification attempt.",
-        "parameters": [
-          {
-            "name": "body",
-            "in": "body",
-            "required": true,
-            "description": "An object which contains user's email and pasword.",
-            "type": "object",
-            "schema": {
-              "$ref": "#/commonDefinitions/AuthBody"
-            }
-          }
-        ],
+        "summary": "Authentification attempt. Returns user info if auth sucessed or an error message otherwise.",
         "responses": {
           "200": {
             "description": "OK",
@@ -264,8 +273,11 @@
               "$ref": "#/commonDefinitions/PostUserBody"
             }
           },
-          "400": {
-            "description": "Invalid Request"
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
           }
         }
       }
@@ -370,6 +382,29 @@
         }
       }
     },
+    "AddUserBodyError": {
+      "requred": ["hasErrors"],
+      "properties": {
+        "hasErrors": {
+          "type": "boolean"
+        },
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        },
+        "firstName": {
+          "type": "string"
+        },
+        "lastName": {
+          "type": "string"
+        },
+        "birthDay": {
+          "type": "string"
+        }
+      }
+    },
     "DeleteNoteResponseBody": {
       "required": ["success", "id"],
       "properties": {
@@ -402,6 +437,10 @@
         }
       }
     },
+    "CommonResponse400": {
+      "type": "string",
+      "example": "Could not convert provided data to particular data type"
+    },
     "AuthBody": {
       "required": ["email", "password"],
       "properties": {
@@ -412,6 +451,10 @@
           "type": "string"
         }
       }
+    },
+    "UnauthorizedError": {
+      "type": "string",
+      "example": "Authorization error: invalid credentials"
     }
   }
 }
