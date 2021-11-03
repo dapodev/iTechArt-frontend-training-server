@@ -6,11 +6,9 @@ const updateNote = async (req, res, next) => {
   const { userData } = res.locals;
 
   try {
-    const parsedId = parseInt(id);
-
     const user = await userData;
 
-    const updatedNote = await updateNoteProvider(user, parsedId, {
+    const updatedNote = await updateNoteProvider(user, id, {
       title,
       description,
       createdAt,

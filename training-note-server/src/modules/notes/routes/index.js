@@ -7,6 +7,12 @@ import {
   updateNoteValidations,
 } from '../validations';
 import { getNotes, addNote, deleteNote, updateNote } from '../controllers';
+import {
+  addNoteParser,
+  deleteNoteParser,
+  getNotesParser,
+  updateNoteParser,
+} from '../converters';
 
 import connect from 'db/connection/connect';
 import commonErrorHandler from 'errors/handlers/commonErrorHandler';
@@ -19,13 +25,17 @@ notesRouter.use(connect);
 
 notesRouter.use(userAuthorization);
 
-notesRouter.get('/', getNotesValidations, getNotes);
+notesRouter.get('/', [getNotesValidations, getNotesParser, getNotes]);
 
-notesRouter.post('/', addNoteValidations, addNote);
+notesRouter.post('/', [addNoteValidations, addNoteParser, addNote]);
 
-notesRouter.put('/:id', updateNoteValidations, updateNote);
+notesRouter.put('/:id', [updateNoteValidations, updateNoteParser, updateNote]);
 
-notesRouter.delete('/:id', deleteNotesValidations, deleteNote);
+notesRouter.delete('/:id', [
+  deleteNotesValidations,
+  deleteNoteParser,
+  deleteNote,
+]);
 
 notesRouter.use([commonErrorHandler, internalErrorHandler]);
 

@@ -2,8 +2,9 @@ const findNoteById = (notes, id) => {
   let result;
 
   notes.forEach((note) => {
-    if ((note.id === id && note?.deleted == false)) {
+    if (note.id === id) {
       result = note;
+      console.log('found');
     }
   });
 

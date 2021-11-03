@@ -5,7 +5,7 @@ const addNote = async (req, res, next) => {
   const { userData } = res.locals;
 
   const note = {
-    id: parseInt(id),
+    id: id,
     title: title,
     description: description,
     createdAt: createdAt,

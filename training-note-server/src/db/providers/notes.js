@@ -120,7 +120,6 @@ export const updateNote = async (userData, noteId, data) => {
 const getNotesByUser = async (user, allFields = false) => {
   await user.populate({ path: 'notes', match: { deleted: false } });
 
-  // extract only important fields and create an array
   const notes = allFields
     ? Array.from(user.notes)
     : Array.from(
