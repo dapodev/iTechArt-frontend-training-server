@@ -1,11 +1,6 @@
 import express from 'express';
 
-import {
-  addNoteValidations,
-  deleteNotesValidations,
-  getNotesValidations,
-  updateNoteValidations,
-} from '../validations';
+import { addNoteValidations, updateNoteValidations } from '../validations';
 import { getNotes, addNote, deleteNote, updateNote } from '../controllers';
 import {
   addNoteParser,
@@ -15,8 +10,6 @@ import {
 } from '../converters';
 
 import connect from 'db/connection/connect';
-import commonErrorHandler from 'errors/handlers/commonErrorHandler';
-import internalErrorHandler from 'errors/handlers/internalErrorHandler';
 import userAuthorization from 'auth';
 
 const notesRouter = express.Router();
@@ -25,18 +18,12 @@ notesRouter.use(connect);
 
 notesRouter.use(userAuthorization);
 
-notesRouter.get('/', [getNotesValidations, getNotesParser, getNotes]);
+notesRouter.get('/', [getNotesParser, getNotes]);
 
 notesRouter.post('/', [addNoteValidations, addNoteParser, addNote]);
 
 notesRouter.put('/:id', [updateNoteValidations, updateNoteParser, updateNote]);
 
-notesRouter.delete('/:id', [
-  deleteNotesValidations,
-  deleteNoteParser,
-  deleteNote,
-]);
-
-notesRouter.use([commonErrorHandler, internalErrorHandler]);
+notesRouter.delete('/:id', [deleteNoteParser, deleteNote]);
 
 export default notesRouter;

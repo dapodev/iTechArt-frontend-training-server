@@ -4,7 +4,6 @@ const findNoteById = (notes, id) => {
   notes.forEach((note) => {
     if (note.id === id) {
       result = note;
-      console.log('found');
     }
   });
 

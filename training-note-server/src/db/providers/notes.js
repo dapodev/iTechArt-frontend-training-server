@@ -45,8 +45,9 @@ export const insertNote = async (userData, note) => {
 
   let insertedNote;
 
-  await user.populate('notes');
-  const originNote = findNoteById(user.notes, note.id);
+  const notes = await getNotesByUser(user);
+
+  const originNote = findNoteById(notes, note.id);
 
   if (originNote) {
     throw new CommonError(

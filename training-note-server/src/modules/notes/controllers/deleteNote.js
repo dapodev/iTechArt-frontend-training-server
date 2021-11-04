@@ -9,7 +9,6 @@ const deleteNote = async (req, res, next) => {
 
   try {
     await deleteNoteProvider(user, id);
-
     res.json(responseBody);
   } catch (err) {
     next(err);

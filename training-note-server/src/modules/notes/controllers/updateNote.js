@@ -5,16 +5,15 @@ const updateNote = async (req, res, next) => {
   const { id } = req.params;
   const { userData } = res.locals;
 
-  try {
-    const user = await userData;
+  const user = await userData;
 
+  try {
     const updatedNote = await updateNoteProvider(user, id, {
       title,
       description,
       createdAt,
       updatedAt,
     });
-
     res.json(updatedNote);
   } catch (err) {
     next(err);

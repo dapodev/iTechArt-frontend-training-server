@@ -8,6 +8,8 @@ import notesRouter from './modules/notes/routes';
 import requestLog from './utils/log/requestLog';
 import { PORT } from './config/constants';
 import usersRouter from 'modules/users/routes';
+import commonErrorHandler from 'errors/handlers/commonErrorHandler';
+import internalErrorHandler from '../build/errors/handlers/internalErrorHandler';
 
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDoucument));
 
@@ -19,5 +21,7 @@ app.use(requestLog);
 app.use('/api/users', usersRouter);
 
 app.use('/api/notes', notesRouter);
+
+app.use(commonErrorHandler, internalErrorHandler);
 
 app.listen(PORT, () => console.log(`Server started at port: ${PORT}`));

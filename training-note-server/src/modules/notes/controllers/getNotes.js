@@ -7,9 +7,9 @@ const getNotes = async (req, res, next) => {
   const filters = { dateFrom, dateTo, name };
   const { userData } = res.locals;
 
-  try {
-    const user = await userData;
+  const user = await userData;
 
+  try {
     const notesPayload = (await getNotesByPage(user, page, filters)).map(
       (note) => {
         const { id, title, description, createdAt, updatedAt } = note;
