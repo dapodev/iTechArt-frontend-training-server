@@ -1,55 +1,57 @@
-import STATUS_CODES from '../../config/constants/statusCodes';
-
+import STATUS_CODES from 'modules/config/constants/statusCodes';
+import CommonError from 'errors/CommonError';
 import {
-  generateErrors,
   validateId,
   validateTitle,
   validateDescription,
   validateDate,
-  validateEmail,
 } from 'utils/validations/common';
 
 const updateNoteValidations = (req, res, next) => {
-  const errors = generateErrors();
-
   const { title, description, createdAt, updatedAt } = req.body;
   const { id } = req.params;
 
   const idValidation = validateId(id);
   if (!idValidation.isValid) {
-    errors.hasErrors = true;
-    errors.id = idValidation.message;
+    throw new CommonError(
+      idValidation.message,
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
   }
 
   const titleValidation = validateTitle(title);
   if (!titleValidation.isValid) {
-    errors.hasErrors = true;
-    errors.title = titleValidation.message;
+    throw new CommonError(
+      titleValidation.message,
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
   }
 
   const descriptionValidation = validateDescription(description);
   if (!descriptionValidation.isValid) {
-    errors.hasErrors = true;
-    errors.description = descriptionValidation.message;
+    throw new CommonError(
+      descriptionValidation.message,
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
   }
 
   const createdAtValidation = validateDate(createdAt, true);
   if (!createdAtValidation.isValid) {
-    errors.hasErrors = true;
-    errors.createdAt = createdAtValidation.message;
+    throw new CommonError(
+      createdAtValidation.message,
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
   }
 
   const updatedAtValidation = validateDate(updatedAt);
   if (!updatedAtValidation.isValid) {
-    errors.hasErrors = true;
-    errors.updatedAt = updatedAtValidation.message;
+    throw new CommonError(
+      updatedAtValidation.message,
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
   }
 
-  if (errors.hasErrors) {
-    res.status(STATUS_CODES.clientErrors.INVALID_REQUEST).json(errors);
-  } else {
-    next();
-  }
+  next();
 };
 
 export default updateNoteValidations;
