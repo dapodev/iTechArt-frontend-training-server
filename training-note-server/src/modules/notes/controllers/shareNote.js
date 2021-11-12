@@ -9,7 +9,8 @@ const shareNote = async (req, res, next) => {
 
   try {
     const sharedWith = await shareNoteWithUsers(user, id, users);
-    
+
+    // TODO: change array response to object with array response(similiar) to request object
     res.json(sharedWith);
   } catch (err) {
     next(err);

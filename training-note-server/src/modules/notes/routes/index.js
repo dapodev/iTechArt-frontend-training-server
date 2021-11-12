@@ -11,11 +11,13 @@ import {
   deleteNote,
   updateNote,
   shareNote,
+  getShared,
 } from '../controllers';
 import {
   addNoteParser,
   deleteNoteParser,
   getNotesParser,
+  getSharedParser,
   shareNoteParser,
   updateNoteParser,
 } from '../converters';
@@ -40,6 +42,8 @@ notesRouter.put('/share/:id', [
   shareNoteParser,
   shareNote,
 ]);
+
+notesRouter.get('/share', [getSharedParser, getShared]);
 
 notesRouter.delete('/:id', [deleteNoteParser, deleteNote]);
 

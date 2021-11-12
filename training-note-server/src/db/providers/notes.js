@@ -173,6 +173,36 @@ export const shareNoteWithUsers = async (userData, id, emails) => {
   return sharedWith;
 };
 
+export const getSharedNotesByUser = async (userData, page) => {
+  const user = userData;
+
+  const userEmail = user.email;
+
+  const notes = await Note.find({ deleted: false, sharedWith: userEmail })
+    .limit(PAGINATION_SIZE)
+    .skip((page - 1) * PAGINATION_SIZE);
+
+  const mappedNotes = await Promise.all(
+    notes.map(async (note) => {
+      const { id, title, description, createdAt, updatedAt } = note;
+      const author_id = note.author;
+
+      const author = (await User.findOne({ _id: author_id }))?.email;
+
+      return {
+        id,
+        title,
+        description,
+        createdAt,
+        updatedAt,
+        author,
+      };
+    })
+  );
+
+  return mappedNotes;
+};
+
 const getNotesByUser = async (user, allFields = false) => {
   await user.populate({ path: 'notes', match: { deleted: false } });
 
