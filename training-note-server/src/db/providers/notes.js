@@ -1,5 +1,6 @@
 import Note from '../models/Note';
 import User from '../models/User';
+import { getUserByEmail } from './users';
 
 import STATUS_CODES from 'modules/config/constants/statusCodes';
 import CommonError from 'errors/CommonError';
@@ -118,6 +119,53 @@ export const updateNote = async (userData, noteId, data) => {
   return newNoteValues;
 };
 
+export const shareNoteWithUsers = async (userData, id, emails) => {
+  const user = userData;
+
+  const _id = await getObjectIdByUserNoteId(user, id);
+
+  let sharedWith = [];
+
+  if (_id) {
+    const noteToShare = await Note.findOne({ _id: _id });
+    const sharedEmailList = noteToShare.sharedWith;
+
+    const emailsToShareWith = [];
+
+    // check if all of provided users exist
+    // and remove all diplicates
+    for (const email of emails) {
+      await getUserByEmail(email);
+
+      if (
+        !(sharedEmailList.includes(email) || emailsToShareWith.includes(email))
+      ) {
+        emailsToShareWith.push(email);
+      }
+    }
+
+    await Note.updateOne(
+      { _id: _id },
+      {
+        $push: {
+          sharedWith: {
+            $each: emailsToShareWith,
+          },
+        },
+      }
+    );
+
+    sharedWith = emailsToShareWith;
+  } else {
+    throw new CommonError(
+      'Could not find note with provided id.',
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
+  }
+
+  return sharedWith;
+};
+
 const getNotesByUser = async (user, allFields = false) => {
   await user.populate({ path: 'notes', match: { deleted: false } });
 
@@ -133,7 +181,7 @@ const getNotesByUser = async (user, allFields = false) => {
   return notes;
 };
 
-const getObjectIdByUserNoteId = async (user, id) => {
+export const getObjectIdByUserNoteId = async (user, id) => {
   const notes = await getNotesByUser(user, true);
 
   const _id = findNoteById(notes, id)?._id;

@@ -1,11 +1,22 @@
 import express from 'express';
 
-import { addNoteValidations, updateNoteValidations } from '../validations';
-import { getNotes, addNote, deleteNote, updateNote } from '../controllers';
+import {
+  addNoteValidations,
+  shareNoteValidations,
+  updateNoteValidations,
+} from '../validations';
+import {
+  getNotes,
+  addNote,
+  deleteNote,
+  updateNote,
+  shareNote,
+} from '../controllers';
 import {
   addNoteParser,
   deleteNoteParser,
   getNotesParser,
+  shareNoteParser,
   updateNoteParser,
 } from '../converters';
 
@@ -23,6 +34,12 @@ notesRouter.get('/', [getNotesParser, getNotes]);
 notesRouter.post('/', [addNoteValidations, addNoteParser, addNote]);
 
 notesRouter.put('/:id', [updateNoteValidations, updateNoteParser, updateNote]);
+
+notesRouter.put('/share/:id', [
+  shareNoteValidations,
+  shareNoteParser,
+  shareNote,
+]);
 
 notesRouter.delete('/:id', [deleteNoteParser, deleteNote]);
 
