@@ -124,7 +124,7 @@ export const shareNoteWithUsers = async (userData, id, emails) => {
 
   if (emails.includes(user.email)) {
     throw new CommonError(
-      'Sharing a note with yourself is not allowed.',
+      'Note self sharing is not allowed.',
       STATUS_CODES.clientErrors.INVALID_REQUEST
     );
   }
@@ -134,13 +134,13 @@ export const shareNoteWithUsers = async (userData, id, emails) => {
   let sharedWith = [];
 
   if (_id) {
-    const noteToShare = await Note.findOne({ _id: _id });
+    const noteToShare = await Note.findOne({ _id: _id, deleted: false });
     const sharedEmailList = noteToShare.sharedWith;
 
     const emailsToShareWith = [];
 
     // check if all of provided users exist
-    // and remove all diplicates
+    // and remove all duplicates
     for (const email of emails) {
       await getUserByEmail(email);
 
@@ -152,7 +152,7 @@ export const shareNoteWithUsers = async (userData, id, emails) => {
     }
 
     await Note.updateOne(
-      { _id: _id },
+      { _id: _id, deleted: false },
       {
         $push: {
           sharedWith: {
