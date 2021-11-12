@@ -10,8 +10,7 @@ const shareNote = async (req, res, next) => {
   try {
     const sharedWith = await shareNoteWithUsers(user, id, users);
 
-    //TODO: change it back to just array
-    res.json({ emails: sharedWith });
+    res.json(sharedWith);
   } catch (err) {
     next(err);
   }
