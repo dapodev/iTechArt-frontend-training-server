@@ -66,7 +66,10 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/Note"
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Note"
+              }
             }
           },
           "400": {
@@ -200,6 +203,84 @@
       }
     },
 
+    "/api/notes/share": {
+      "get": {
+        "tags": ["Notes"],
+        "summary": "Get the list of notes which other users shared with you.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Sequence number of the page of notes that we want to get from the server. Default value: 1",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Note"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/notes/share/{id}": {
+      "put": {
+        "tags": ["Notes"],
+        "summary": "Share the a note with several users.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains 'emails' field - array of emails of users to share the note with.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/UsersEmailsArrayObject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/ArrayOfEmails"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          }
+        }
+      }
+    },
+
     "/api/users": {
       "get": {
         "tags": ["Users"],
@@ -209,7 +290,9 @@
             "description": "OK",
             "schema": {
               "type": "array",
-              "$ref": "#/commonDefinitions/UserResponseBody"
+              "items": {
+                "$ref": "#/commonDefinitions/UserResponseBody"
+              }
             }
           },
           "400": {
@@ -427,6 +510,21 @@
     "UnauthorizedError": {
       "type": "string",
       "example": "Authorization error: invalid credentials"
+    },
+    "UsersEmailsArrayObject": {
+      "required": ["emails"],
+      "properties": {
+        "emails": {
+          "$ref": "#/commonDefinitions/ArrayOfEmails"
+        }
+      }
+    },
+    "ArrayOfEmails": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "example": "apolo@gmail.com"
+      }
     }
   }
 }
