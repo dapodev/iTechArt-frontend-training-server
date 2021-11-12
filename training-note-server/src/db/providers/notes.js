@@ -56,7 +56,19 @@ export const insertNote = async (userData, note) => {
       STATUS_CODES.clientErrors.INVALID_REQUEST
     );
   } else {
-    insertedNote = await Note.create(note);
+    const { id, title, description, createdAt, updatedAt } = note;
+
+    const newNote = {
+      id,
+      title,
+      description,
+      createdAt,
+      updatedAt,
+      author: user._id,
+      sharedWith: [],
+    };
+
+    insertedNote = await Note.create(newNote);
     await User.findOneAndUpdate(
       { _id: user._id },
       { $push: { notes: insertedNote._id } }
