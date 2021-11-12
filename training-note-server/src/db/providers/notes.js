@@ -122,6 +122,13 @@ export const updateNote = async (userData, noteId, data) => {
 export const shareNoteWithUsers = async (userData, id, emails) => {
   const user = userData;
 
+  if (emails.includes(user.email)) {
+    throw new CommonError(
+      'Sharing a note with yourself is not allowed.',
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
+  }
+
   const _id = await getObjectIdByUserNoteId(user, id);
 
   let sharedWith = [];
