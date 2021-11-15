@@ -10,7 +10,7 @@
     "clean": "if exist build rd /s /q build",
     "start": "npm run build && node ./build/app.js",
     "dev": "npm run build:dev && node ./build/app.js",
-    "deploy": "git add . && git commit -m 'deploy' && git push heroku master"
+    "deploy": "git add . && git commit -m 'deploy' && git push heroku master -f"
   },
   "author": "apolo",
   "license": "ISC",
