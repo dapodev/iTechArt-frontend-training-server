@@ -245,7 +245,7 @@
     "/api/notes/share/{id}": {
       "put": {
         "tags": ["Notes"],
-        "summary": "Share the a note with several users.",
+        "summary": "Share the note with several users.",
         "parameters": [
           {
             "name": "body",
