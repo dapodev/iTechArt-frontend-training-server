@@ -251,7 +251,7 @@
             "name": "body",
             "in": "body",
             "required": true,
-            "description": "An object that contains 'emails' field - array of emails of users to share the note with.",
+            "description": "An object that contains 'users' field - array of emails of users to share the note with.",
             "type": "object",
             "schema": {
               "$ref": "#/commonDefinitions/UsersEmailsArrayObject"
@@ -512,9 +512,9 @@
       "example": "Authorization error: invalid credentials"
     },
     "UsersEmailsArrayObject": {
-      "required": ["emails"],
+      "required": ["users"],
       "properties": {
-        "emails": {
+        "users": {
           "$ref": "#/commonDefinitions/ArrayOfEmails"
         }
       }
