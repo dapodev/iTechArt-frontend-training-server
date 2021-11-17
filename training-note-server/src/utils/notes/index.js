@@ -10,4 +10,18 @@ const findNoteById = (notes, id) => {
   return result;
 };
 
-export { findNoteById };
+const getFreeId = (notes) => {
+  let searchId = 0;
+
+  while (searchId < notes.length) {
+    if (!notes.filter((note) => note.id === searchId).length) {
+      break;
+    }
+
+    searchId++;
+  }
+
+  return searchId;
+};
+
+export { findNoteById, getFreeId };
