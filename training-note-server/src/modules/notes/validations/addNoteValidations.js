@@ -1,9 +1,7 @@
 import STATUS_CODES from '../../config/constants/statusCodes';
 
 import {
-  validateDate,
   validateDescription,
-  validateId,
   validateTitle,
 } from 'utils/validations/common';
 import CommonError from 'errors/CommonError';

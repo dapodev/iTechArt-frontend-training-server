@@ -105,14 +105,15 @@ export const updateNote = async (userData, noteId, data) => {
   const user = userData;
   const _id = await getObjectIdByUserNoteId(user, noteId);
 
+  const serverDateTime = getServerCurrentDateTime();
+
   if (_id) {
     await Note.updateOne(
       { _id: _id, deleted: false },
       {
         title: data.title,
         description: data.description,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
+        updatedAt: serverDateTime,
       }
     );
   } else {
@@ -122,7 +123,7 @@ export const updateNote = async (userData, noteId, data) => {
     );
   }
 
-  const updatedNote = await Note.findOne({ id: noteId, deleted: false });
+  const updatedNote = await Note.findOne({ _id: _id });
 
   const { id, title, description, createdAt, updatedAt } = updatedNote;
 
