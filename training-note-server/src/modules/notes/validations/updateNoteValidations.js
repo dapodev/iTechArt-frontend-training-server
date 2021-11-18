@@ -1,19 +1,19 @@
 import STATUS_CODES from 'modules/config/constants/statusCodes';
 import CommonError from 'errors/CommonError';
 import {
-  validateId,
   validateTitle,
   validateDescription,
+  validateId,
 } from 'utils/validations/common';
 
 const updateNoteValidations = (req, res, next) => {
-  const { title, description } = req.body;
   const { id } = req.params;
+  const { title, description } = req.body;
 
-  const idValidation = validateId(id);
-  if (!idValidation.isValid) {
+  const idValidations = validateId(id);
+  if (!idValidations.isValid) {
     throw new CommonError(
-      idValidation.message,
+      idValidations.message,
       STATUS_CODES.clientErrors.INVALID_REQUEST
     );
   }

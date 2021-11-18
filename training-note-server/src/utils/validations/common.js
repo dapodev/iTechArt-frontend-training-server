@@ -1,6 +1,7 @@
+import { isValidObjectId } from 'mongoose';
+
 import {
   EMAIL_PATTERN,
-  ID_PATTERN,
   MAX_DESCRIPTION_LENGTH,
   MIN_DESCRIPTION_LENGTH,
   MIN_TITLE_LENGTH,
@@ -26,28 +27,33 @@ const generateValidationResult = () => {
 export const validateId = (id) => {
   const result = generateValidationResult();
 
-  switch (typeof id) {
-    case 'number':
-      if (id < 0) {
-        result.isValid = false;
-        result.message = "Note ID can't be a negative value.";
-      }
-      break;
-    case 'string':
-      if (ID_PATTERN.test(id)) {
-        if (+id < 0) {
-          result.isValid = false;
-          result.message = "Note ID can't be a negative value.";
-        }
-      } else {
-        result.isValid = false;
-        result.message = "Note ID can't be converted to a number value.";
-      }
-      break;
-    default:
-      result.isValid = false;
-      result.message = 'No note id provided.';
+  if (!isValidObjectId(id)) {
+    result.isValid = false;
+    result.message = 'Could not convert provided id value to ObjectId type.';
   }
+
+  // switch (typeof id) {
+  //   case 'number':
+  //     if (id < 0) {
+  //       result.isValid = false;
+  //       result.message = "Note ID can't be a negative value.";
+  //     }
+  //     break;
+  //   case 'string':
+  //     if (ID_PATTERN.test(id)) {
+  //       if (+id < 0) {
+  //         result.isValid = false;
+  //         result.message = "Note ID can't be a negative value.";
+  //       }
+  //     } else {
+  //       result.isValid = false;
+  //       result.message = "Note ID can't be converted to a number value.";
+  //     }
+  //     break;
+  //   default:
+  //     result.isValid = false;
+  //     result.message = 'No note id provided.';
+  // }
 
   return result;
 };
@@ -157,6 +163,24 @@ export const validatePassword = (password) => {
   } else {
     result.isValid = false;
     result.message = 'Password is not provided or can not be resolved.';
+  }
+
+  return result;
+};
+
+export const validateEmails = (emails) => {
+  const result = generateValidationResult();
+
+  if (emails?.length) {
+    emails.forEach((email) => {
+      if (typeof email !== 'string') {
+        result.isValid = false;
+        result.message = 'Invalid instance in provided array of emails.';
+      }
+    });
+  } else {
+    result.isValid = false;
+    result.message = 'Array of users emails is not provided.';
   }
 
   return result;

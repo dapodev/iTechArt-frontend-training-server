@@ -16,7 +16,7 @@ const userAuthorization = async (req, res, next) => {
       );
 
       if (accessGranted) {
-        const userInfo = getUserByEmail(credentials.name);
+        const userInfo = await getUserByEmail(credentials.name);
         res.locals.userData = userInfo;
 
         req.next();

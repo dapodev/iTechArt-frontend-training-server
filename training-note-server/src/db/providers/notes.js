@@ -1,237 +1,146 @@
+import CommonError from 'errors/CommonError';
+import STATUS_CODES from 'modules/config/constants/statusCodes';
+import { PAGINATION_SIZE } from 'modules/config/constants';
+import { isDate } from 'utils/typeChecks';
+import {
+  normalizeNote,
+  normalizeNoteList,
+  normalizeSharedNoteList,
+} from 'utils/db/normalizers';
+
 import Note from '../models/Note';
 import User from '../models/User';
 import { getUserByEmail } from './users';
 
-import STATUS_CODES from 'modules/config/constants/statusCodes';
-import CommonError from 'errors/CommonError';
-import { PAGINATION_SIZE } from 'modules/config/constants';
-import { isDate } from 'utils/typeChecks';
-import { findNoteById, getFreeId } from 'utils/notes';
-import { getServerCurrentDateTime } from 'utils/dateTime';
-
-export const getAllNotes = async (userData) => {
-  const user = userData;
-
-  const notes = getNotesByUser(user);
-
-  return notes;
-};
-
-export const getNotesByPage = async (userData, page, filters) => {
-  const user = userData;
-
-  const _ids = (await getNotesByUser(user, true)).map((note) => note._id);
-
-  const resultNotes = await Note.find({
-    deleted: false,
-    title: {
-      $regex: filters.name || '',
-      $options: 'i',
-    },
-    createdAt: {
-      $gte: new Date(isDate(filters.dateFrom) ? filters.dateFrom : null),
-      $lte: isDate(filters.dateTo) ? new Date(filters.dateTo) : new Date(),
-    },
-    _id: {
-      $in: _ids,
-    },
-  })
+export const getNotesByPage = async (user, page, filters) => {
+  const resultNotes = await getNotesByUserQuery(user)
+    .find({
+      title: {
+        $regex: filters.name || '',
+        $options: 'i',
+      },
+      createdAt: {
+        $gte: new Date(isDate(filters.dateFrom) ? filters.dateFrom : null),
+        $lte: isDate(filters.dateTo) ? new Date(filters.dateTo) : new Date(),
+      },
+    })
     .limit(PAGINATION_SIZE)
     .skip((page - 1) * PAGINATION_SIZE);
 
-  return resultNotes;
+  return normalizeNoteList(resultNotes);
 };
 
-export const insertNote = async (userData, noteData) => {
-  const user = userData;
-
-  let insertedNote;
-
-  const notes = await getNotesByUser(user);
-
-  const availableId = getFreeId(notes);
-  const serverDateTime = getServerCurrentDateTime();
-
-  const newNoteData = {
-    id: availableId,
-    title: noteData.title,
-    description: noteData.description,
-    createdAt: serverDateTime,
-    author: user._id,
-    sharedWith: [],
-  };
-
-  insertedNote = await Note.create(newNoteData);
+export const insertNote = async (user, noteData) => {
+  const insertedNote = await Note.create(noteData);
   await User.findOneAndUpdate(
     { _id: user._id },
     { $push: { notes: insertedNote._id } }
   );
 
-  const { id, title, description, createdAt } = insertedNote;
-
-  const newNoteValues = {
-    id,
-    title,
-    description,
-    createdAt,
-  };
-
-  return newNoteValues;
+  return normalizeNote(insertedNote);
 };
 
-export const removeNote = async (userData, id) => {
-  const user = userData;
+export const removeNote = async (user, id) => {
+  const note = await getNoteById(user, id);
 
-  const _id = await getObjectIdByUserNoteId(user, id);
+  await Note.updateOne({ _id: note._id, deleted: false }, { deleted: true });
 
-  if (_id) {
-    await Note.updateOne({ _id: _id, deleted: false }, { deleted: true });
-  } else {
-    throw new CommonError(
-      'Delete: Could not find note with provided id.',
-      STATUS_CODES.clientErrors.INVALID_REQUEST
-    );
-  }
-
-  const deletedNote = await Note.findOne({ _id: _id });
-
-  return deletedNote;
+  return normalizeNote(note);
 };
 
-export const updateNote = async (userData, noteId, data) => {
-  const user = userData;
-  const _id = await getObjectIdByUserNoteId(user, noteId);
+export const updateNote = async (user, id, updateData) => {
+  const note = await getNoteById(user, id);
 
-  const serverDateTime = getServerCurrentDateTime();
+  const { title, description, updatedAt } = updateData;
 
-  if (_id) {
-    await Note.updateOne(
-      { _id: _id, deleted: false },
-      {
-        title: data.title,
-        description: data.description,
-        updatedAt: serverDateTime,
-      }
-    );
-  } else {
-    throw new CommonError(
-      'Update: No notes with provided ID found.',
-      STATUS_CODES.clientErrors.INVALID_REQUEST
-    );
-  }
-
-  const updatedNote = await Note.findOne({ _id: _id });
-
-  const { id, title, description, createdAt, updatedAt } = updatedNote;
-
-  const newNoteValues = { id, title, description, createdAt, updatedAt };
-
-  return newNoteValues;
-};
-
-export const shareNoteWithUsers = async (userData, id, emails) => {
-  const user = userData;
-
-  if (emails.includes(user.email)) {
-    throw new CommonError(
-      'Note self sharing is not allowed.',
-      STATUS_CODES.clientErrors.INVALID_REQUEST
-    );
-  }
-
-  const _id = await getObjectIdByUserNoteId(user, id);
-
-  let sharedWith = [];
-
-  if (_id) {
-    const noteToShare = await Note.findOne({ _id: _id, deleted: false });
-    const sharedEmailList = noteToShare.sharedWith;
-
-    const emailsToShareWith = [];
-
-    // check if all of provided users exist
-    // and remove all duplicates
-    for (const email of emails) {
-      await getUserByEmail(email);
-
-      if (
-        !(sharedEmailList.includes(email) || emailsToShareWith.includes(email))
-      ) {
-        emailsToShareWith.push(email);
-      }
+  await Note.updateOne(
+    { _id: note._id },
+    {
+      title: title,
+      description: description,
+      updatedAt: updatedAt,
     }
+  );
 
-    await Note.updateOne(
-      { _id: _id, deleted: false },
-      {
-        $push: {
-          sharedWith: {
-            $each: emailsToShareWith,
-          },
-        },
-      }
-    );
+  const updatedNote = await Note.findOne({ _id: note._id });
 
-    sharedWith = emailsToShareWith;
-  } else {
-    throw new CommonError(
-      'Could not find note with provided id.',
-      STATUS_CODES.clientErrors.INVALID_REQUEST
-    );
-  }
-
-  return sharedWith;
+  return normalizeNote(updatedNote);
 };
 
-export const getSharedNotesByUser = async (userData, page) => {
-  const user = userData;
+export const shareNoteWithUsers = async (user, id, emails) => {
+  const noteToShare = await getNoteById(user, id);
+  const sharedEmailList = noteToShare.sharedWith;
 
-  const userEmail = user.email;
+  const emailsToShareWith = [];
 
-  const notes = await Note.find({ deleted: false, sharedWith: userEmail })
+  // check if all of provided users exist
+  // and remove all duplicates
+  for (const email of emails) {
+    await getUserByEmail(email);
+
+    if (
+      !(sharedEmailList.includes(email) || emailsToShareWith.includes(email))
+    ) {
+      emailsToShareWith.push(email);
+    }
+  }
+
+  await Note.updateOne(
+    { _id: noteToShare._id, deleted: false },
+    {
+      $push: {
+        sharedWith: {
+          $each: emailsToShareWith,
+        },
+      },
+    }
+  );
+
+  return emailsToShareWith;
+};
+
+export const getSharedNotesByUser = async (user, page) => {
+  const notes = await Note.find({ deleted: false, sharedWith: user.email })
     .limit(PAGINATION_SIZE)
     .skip((page - 1) * PAGINATION_SIZE);
 
   const mappedNotes = await Promise.all(
     notes.map(async (note) => {
-      const { id, title, description, createdAt, updatedAt } = note;
       const author_id = note.author;
 
       const author = (await User.findOne({ _id: author_id }))?.email;
 
+      const { _id, title, description, createdAt, updatedAt, sharedWith } =
+        note;
+
       return {
-        id,
+        _id,
         title,
         description,
         createdAt,
         updatedAt,
-        author,
+        sharedWith,
+        author: author,
       };
     })
   );
 
-  return mappedNotes;
+  return normalizeSharedNoteList(mappedNotes);
 };
 
-const getNotesByUser = async (user, allFields = false) => {
-  await user.populate({ path: 'notes', match: { deleted: false } });
-
-  const notes = allFields
-    ? Array.from(user.notes)
-    : Array.from(
-        user.notes.map((note) => {
-          const { id, title, description, createdAt, updatedAt } = note;
-          return { id, title, description, createdAt, updatedAt };
-        })
-      );
-
-  return notes;
+const getNotesByUserQuery = (user) => {
+  return Note.find({ deleted: false, author: user._id });
 };
 
-export const getObjectIdByUserNoteId = async (user, id) => {
-  const notes = await getNotesByUser(user, true);
+const getNoteById = async (user, id) => {
+  const note = await getNotesByUserQuery(user).findOne({ _id: id });
 
-  const _id = findNoteById(notes, id)?._id;
+  if (!note) {
+    throw new CommonError(
+      'Note Search: could not find note with provided id.',
+      STATUS_CODES.clientErrors.INVALID_REQUEST
+    );
+  }
 
-  return _id;
+  return note;
 };

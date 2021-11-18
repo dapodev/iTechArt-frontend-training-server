@@ -4,11 +4,10 @@ const deleteNote = async (req, res, next) => {
   const { id } = req.params;
   const { userData } = res.locals;
 
-  const user = await userData;
   const responseBody = { success: true, id: id };
 
   try {
-    await deleteNoteProvider(user, id);
+    await deleteNoteProvider(userData, id);
     res.json(responseBody);
   } catch (err) {
     next(err);

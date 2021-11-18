@@ -4,10 +4,8 @@ const getShared = async (req, res, next) => {
   const { page } = req.query;
   const { userData } = res.locals;
 
-  const user = await userData;
-
   try {
-    const notes = await getSharedNotesByUser(user, page);
+    const notes = await getSharedNotesByUser(userData, page);
 
     res.json(notes);
   } catch (err) {

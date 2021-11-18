@@ -2,6 +2,7 @@ import express from 'express';
 
 import {
   addNoteValidations,
+  deleteNotesValidations,
   shareNoteValidations,
   updateNoteValidations,
 } from '../validations';
@@ -37,6 +38,12 @@ notesRouter.post('/', [addNoteValidations, addNoteParser, addNote]);
 
 notesRouter.put('/:id', [updateNoteValidations, updateNoteParser, updateNote]);
 
+notesRouter.delete('/:id', [
+  deleteNotesValidations,
+  deleteNoteParser,
+  deleteNote,
+]);
+
 notesRouter.put('/share/:id', [
   shareNoteValidations,
   shareNoteParser,
@@ -44,7 +51,5 @@ notesRouter.put('/share/:id', [
 ]);
 
 notesRouter.get('/share', [getSharedParser, getShared]);
-
-notesRouter.delete('/:id', [deleteNoteParser, deleteNote]);
 
 export default notesRouter;

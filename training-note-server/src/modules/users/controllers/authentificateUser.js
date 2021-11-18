@@ -2,9 +2,7 @@ const authentificateUser = async (req, res, next) => {
   const { userData } = res.locals;
 
   try {
-    const user = await userData;
-
-    const { email, password, firstName, lastName, birthday } = user;
+    const { email, password, firstName, lastName, birthday } = userData;
 
     const userPayload = { email, password, firstName, lastName, birthday };
 

@@ -2,10 +2,10 @@ import { addUser } from 'db/providers/users';
 
 const registerUser = async (req, res, next) => {
   const { email, firstName, lastName, birthday, password } = req.body;
-  const userData = { email, firstName, lastName, birthday, password };
+  const newUserData = { email, firstName, lastName, birthday, password };
 
   try {
-    const newUser = await addUser(userData);
+    const newUser = await addUser(newUserData);
 
     res.json(newUser);
   } catch (err) {
