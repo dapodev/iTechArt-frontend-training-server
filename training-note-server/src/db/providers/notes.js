@@ -67,16 +67,13 @@ export const insertNote = async (userData, noteData) => {
     { $push: { notes: insertedNote._id } }
   );
 
-  const { id, title, description, createdAt, author, sharedWith } =
-    insertedNote;
+  const { id, title, description, createdAt } = insertedNote;
 
   const newNoteValues = {
     id,
     title,
     description,
     createdAt,
-    author,
-    sharedWith,
   };
 
   return newNoteValues;
