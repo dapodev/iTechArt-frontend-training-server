@@ -1,7 +1,7 @@
 import { updateNote as updateNoteProvider } from 'db/providers/notes';
 
 const updateNote = async (req, res, next) => {
-  const { title, description, createdAt, updatedAt } = req.body;
+  const { title, description } = req.body;
   const { id } = req.params;
   const { userData } = res.locals;
 
@@ -11,9 +11,8 @@ const updateNote = async (req, res, next) => {
     const updatedNote = await updateNoteProvider(user, id, {
       title,
       description,
-      createdAt,
-      updatedAt,
     });
+    
     res.json(updatedNote);
   } catch (err) {
     next(err);

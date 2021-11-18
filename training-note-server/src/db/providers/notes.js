@@ -6,7 +6,8 @@ import STATUS_CODES from 'modules/config/constants/statusCodes';
 import CommonError from 'errors/CommonError';
 import { PAGINATION_SIZE } from 'modules/config/constants';
 import { isDate } from 'utils/typeChecks';
-import { findNoteById } from 'utils/notes';
+import { findNoteById, getFreeId } from 'utils/notes';
+import { getServerCurrentDateTime } from 'utils/dateTime';
 
 export const getAllNotes = async (userData) => {
   const user = userData;
@@ -41,43 +42,42 @@ export const getNotesByPage = async (userData, page, filters) => {
   return resultNotes;
 };
 
-export const insertNote = async (userData, note) => {
+export const insertNote = async (userData, noteData) => {
   const user = userData;
 
   let insertedNote;
 
   const notes = await getNotesByUser(user);
 
-  const originNote = findNoteById(notes, note.id);
+  const availableId = getFreeId(notes);
+  const serverDateTime = getServerCurrentDateTime();
 
-  if (originNote) {
-    throw new CommonError(
-      'Insert: note with provided ID already exists',
-      STATUS_CODES.clientErrors.INVALID_REQUEST
-    );
-  } else {
-    const { id, title, description, createdAt, updatedAt } = note;
+  const newNoteData = {
+    id: availableId,
+    title: noteData.title,
+    description: noteData.description,
+    createdAt: serverDateTime,
+    author: user._id,
+    sharedWith: [],
+  };
 
-    const newNote = {
-      id,
-      title,
-      description,
-      createdAt,
-      updatedAt,
-      author: user._id,
-      sharedWith: [],
-    };
+  insertedNote = await Note.create(newNoteData);
+  await User.findOneAndUpdate(
+    { _id: user._id },
+    { $push: { notes: insertedNote._id } }
+  );
 
-    insertedNote = await Note.create(newNote);
-    await User.findOneAndUpdate(
-      { _id: user._id },
-      { $push: { notes: insertedNote._id } }
-    );
-  }
+  const { id, title, description, createdAt, author, sharedWith } =
+    insertedNote;
 
-  const { id, title, description, createdAt, updatedAt } = insertedNote;
-
-  const newNoteValues = { id, title, description, createdAt, updatedAt };
+  const newNoteValues = {
+    id,
+    title,
+    description,
+    createdAt,
+    author,
+    sharedWith,
+  };
 
   return newNoteValues;
 };
@@ -105,14 +105,15 @@ export const updateNote = async (userData, noteId, data) => {
   const user = userData;
   const _id = await getObjectIdByUserNoteId(user, noteId);
 
+  const serverDateTime = getServerCurrentDateTime();
+
   if (_id) {
     await Note.updateOne(
       { _id: _id, deleted: false },
       {
         title: data.title,
         description: data.description,
-        createdAt: data.createdAt,
-        updatedAt: data.updatedAt,
+        updatedAt: serverDateTime,
       }
     );
   } else {
@@ -122,7 +123,7 @@ export const updateNote = async (userData, noteId, data) => {
     );
   }
 
-  const updatedNote = await Note.findOne({ id: noteId, deleted: false });
+  const updatedNote = await Note.findOne({ _id: _id });
 
   const { id, title, description, createdAt, updatedAt } = updatedNote;
 
