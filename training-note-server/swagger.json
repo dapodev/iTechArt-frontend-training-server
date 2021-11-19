@@ -105,7 +105,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/Note"
+              "$ref": "#/commonDefinitions/PostAndUpdateResponseBody"
             }
           },
           "400": {
@@ -134,7 +134,7 @@
             "in": "path",
             "required": true,
             "description": "A note you want to update ID value.",
-            "type": "integer"
+            "type": "string"
           },
           {
             "name": "body",
@@ -151,7 +151,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/definitions/Note"
+              "$ref": "#/commonDefinitions/PostAndUpdateResponseBody"
             }
           },
           "400": {
@@ -177,7 +177,7 @@
             "in": "path",
             "required": true,
             "description": "The ID of the note you want to mark as deleted.",
-            "type": "integer"
+            "type": "string"
           }
         ],
         "responses": {
@@ -222,7 +222,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "$ref": "#/definitions/Note"
+                "$ref": "#/commonDefinitions/GetSharedResponseBody"
               }
             }
           },
@@ -368,12 +368,12 @@
 
   "definitions": {
     "Note": {
-      "required": ["id", "title", "description", "createdAt"],
+      "required": ["id", "title", "description", "createdAt", "sharedWith"],
       "properties": {
         "id": {
-          "type": "integer",
+          "type": "string",
           "uniqueItems": true,
-          "example": 127
+          "example": "619559804621f90bbeae1a1a"
         },
         "title": {
           "type": "string",
@@ -390,6 +390,12 @@
         "updatedAt": {
           "type": "string",
           "example": "2002-07-25T00:00:00.000Z"
+        },
+        "sharedWith": {
+          "type": "array",
+          "items": {
+            "$ref": "#/commonDefinitions/ArrayOfEmails"
+          }
         }
       }
     },
@@ -473,6 +479,32 @@
         }
       }
     },
+    "PostAndUpdateResponseBody": {
+      "required": ["id", "title", "description", "createdAt"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "619559804621f90bbeae1a1a"
+        },
+        "title": {
+          "type": "string",
+          "example": "Text Jimmy on facebook"
+        },
+        "description": {
+          "type": "string",
+          "example": "Today I'm gonna finally text Jim about incoming party."
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2002-07-22T00:00:00.000Z"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2002-07-25T00:00:00.000Z"
+        }
+      }
+    },
     "DeleteNoteResponseBody": {
       "required": ["success", "id"],
       "properties": {
@@ -480,7 +512,8 @@
           "type": "boolean"
         },
         "id": {
-          "type": "integer"
+          "type": "string",
+          "example": "61978398175a4d517602b064"
         }
       }
     },
@@ -496,6 +529,36 @@
         },
         "password": {
           "type": "string"
+        }
+      }
+    },
+    "GetSharedResponseBody": {
+      "required": ["id", "title", "description", "createdAt", "author"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "619559804621f90bbeae1a1a"
+        },
+        "title": {
+          "type": "string",
+          "example": "Text Jimmy on facebook"
+        },
+        "description": {
+          "type": "string",
+          "example": "Today I'm gonna finally text Jim about incoming party."
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2002-07-22T00:00:00.000Z"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2002-07-25T00:00:00.000Z"
+        },
+        "author": {
+          "type": "string",
+          "example": "apolo@gmail.com"
         }
       }
     },
