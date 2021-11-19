@@ -4,6 +4,6 @@ module.exports = {
   },
 
   async down(db, client) {
-    // set id to _id? using $?
+    await db.collection('notes').updateMany({}, { $set: { id: '$_id' } });
   },
 };
