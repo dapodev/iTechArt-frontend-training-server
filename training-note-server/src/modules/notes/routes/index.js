@@ -24,13 +24,13 @@ import {
 } from '../converters';
 
 import connect from 'db/connection/connect';
-import userAuthorization from 'auth';
+import { jwtAuth } from 'auth';
 
 const notesRouter = express.Router();
 
 notesRouter.use(connect);
 
-notesRouter.use(userAuthorization);
+notesRouter.use(jwtAuth);
 
 notesRouter.get('/', [getNotesParser, getNotes]);
 

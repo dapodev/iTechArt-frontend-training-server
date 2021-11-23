@@ -1,12 +1,31 @@
+import { isAccessGranted } from 'auth/common';
+import generateToken from 'auth/generateToken';
+import CommonError from 'errors/CommonError';
+import STATUS_CODES from 'modules/config/constants/statusCodes';
+
 const authentificateUser = async (req, res, next) => {
-  const { userData } = res.locals;
+  const { email, password } = req.body;
 
   try {
-    const { email, password, firstName, lastName, birthday } = userData;
+    if (!(email && password)) {
+      throw new CommonError(
+        'No auth data provided.',
+        STATUS_CODES.clientErrors.UNAUTHORIZED
+      );
+    }
 
-    const userPayload = { email, password, firstName, lastName, birthday };
+    const accessGranted = await isAccessGranted(email, password);
 
-    res.json(userPayload);
+    if (!accessGranted) {
+      throw new CommonError(
+        'Authorization error: invalid credentials',
+        STATUS_CODES.clientErrors.UNAUTHORIZED
+      );
+    }
+
+    const token = generateToken(email);
+
+    res.json({ token });
   } catch (err) {
     next(err);
   }

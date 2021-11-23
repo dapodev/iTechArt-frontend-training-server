@@ -1,8 +1,8 @@
+import dotenv from 'dotenv';
 import swaggerUI from 'swagger-ui-express';
 import swaggerDoucument from '../swagger.json';
 import express from 'express';
 import cors from 'cors';
-import dotenv from 'dotenv';
 
 import commonErrorHandler from 'errors/handlers/commonErrorHandler';
 import usersRouter from 'modules/users/routes';

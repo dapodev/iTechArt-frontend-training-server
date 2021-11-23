@@ -5,6 +5,7 @@ const STATUS_CODES = {
   clientErrors: {
     INVALID_REQUEST: 400,
     UNAUTHORIZED: 401,
+    FORBIDDEN: 403,
   },
   serverErrors: {
     INTERNAL_ERROR: 500,
