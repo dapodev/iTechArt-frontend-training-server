@@ -1,3 +1,4 @@
+import generateToken from 'auth/generateToken';
 import { addUser } from 'db/providers/users';
 
 const registerUser = async (req, res, next) => {
@@ -7,7 +8,9 @@ const registerUser = async (req, res, next) => {
   try {
     const newUser = await addUser(newUserData);
 
-    res.json(newUser);
+    const token = generateToken(newUser.email);
+
+    res.json({ token: token });
   } catch (err) {
     next(err);
   }
