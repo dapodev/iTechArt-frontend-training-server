@@ -1,6 +1,6 @@
 {
   "name": "backend",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "",
   "main": "app.js",
   "scripts": {
@@ -28,6 +28,7 @@
     "crypto": "^1.0.1",
     "dotenv": "^10.0.0",
     "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
     "mongoose": "^6.0.11",
     "swagger-ui-express": "^4.1.6",
     "tsscmp": "^1.0.6",

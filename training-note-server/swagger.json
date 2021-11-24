@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.0.0",
+    "version": "2.1.0",
     "title": "iTechArt ReactJS training server",
     "description": "This NodeJS API was created to provide backend part for your ReactJS note application.",
     "license": {
@@ -16,14 +16,17 @@
   "produces": ["application/json"],
 
   "securityDefinitions": {
-    "basicAuth": {
-      "type": "basic"
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT auth token. Example: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbC...]"
     }
   },
 
   "security": [
     {
-      "basicAuth": []
+      "JWT": []
     }
   ],
 
@@ -83,6 +86,12 @@
             "schema": {
               "$ref": "#/commonDefinitions/UnauthorizedError"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
           }
         }
       },
@@ -118,6 +127,12 @@
             "description": "Unauthorized",
             "schema": {
               "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
             }
           }
         }
@@ -165,6 +180,12 @@
             "schema": {
               "$ref": "#/commonDefinitions/UnauthorizedError"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
           }
         }
       },
@@ -197,6 +218,12 @@
             "description": "Unauthorized",
             "schema": {
               "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
             }
           }
         }
@@ -237,6 +264,12 @@
             "schema": {
               "$ref": "#/commonDefinitions/UnauthorizedError"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
           }
         }
       }
@@ -276,6 +309,12 @@
             "schema": {
               "$ref": "#/commonDefinitions/UnauthorizedError"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
           }
         }
       }
@@ -306,6 +345,12 @@
             "schema": {
               "$ref": "#/commonDefinitions/UnauthorizedError"
             }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
           }
         }
       },
@@ -329,8 +374,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "$ref": "#/commonDefinitions/UserResponseBody"
+              "$ref": "#/commonDefinitions/TokenResponse"
             }
           },
           "400": {
@@ -347,12 +391,13 @@
       "get": {
         "tags": ["Authentification"],
         "summary": "Authentification attempt. Returns user info if auth sucessed or an error message otherwise.",
+        "security": [],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
               "type": "array",
-              "$ref": "#/commonDefinitions/UserResponseBody"
+              "$ref": "#/commonDefinitions/TokenResponse"
             }
           },
           "401": {
@@ -521,6 +566,10 @@
       "type": "string",
       "example": "Could not convert provided data to particular data type"
     },
+    "ForbiddenError": {
+      "type": "string",
+      "example": "Auth token is invalid"
+    },
     "AuthBody": {
       "required": ["email", "password"],
       "properties": {
@@ -579,6 +628,15 @@
       "items": {
         "type": "string",
         "example": "apolo@gmail.com"
+      }
+    },
+    "TokenResponse": {
+      "required": ["token"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        }
       }
     }
   }
