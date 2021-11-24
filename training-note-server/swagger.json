@@ -374,8 +374,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
-              "$ref": "#/commonDefinitions/UserResponseBody"
+              "$ref": "#/commonDefinitions/TokenResponse"
             }
           },
           "400": {
