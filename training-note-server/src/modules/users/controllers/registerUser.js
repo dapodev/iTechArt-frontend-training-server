@@ -8,9 +8,18 @@ const registerUser = async (req, res, next) => {
   try {
     const newUser = await addUser(newUserData);
 
+    const userInfoPayload = {
+      email,
+      birthday: newUser.birthday,
+      firstName,
+      lastName,
+    };
+
     const token = generateToken(newUser.email);
 
-    res.json({ token: token });
+    const responsePayload = { token, user: userInfoPayload };
+
+    res.json(responsePayload);
   } catch (err) {
     next(err);
   }
