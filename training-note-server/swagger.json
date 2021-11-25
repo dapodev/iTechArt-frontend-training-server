@@ -486,16 +486,12 @@
   },
   "commonDefinitions": {
     "UserResponseBody": {
-      "required": ["email", "password", "firstName", "lastName", "birthday"],
+      "required": ["email", "firstName", "lastName", "birthday"],
       "properties": {
         "email": {
           "type": "string",
           "uniqueItems": true,
           "example": "daniel.apolo@gmail.com"
-        },
-        "password": {
-          "type": "string",
-          "example": "13e8753558ed67e1f832655493058224"
         },
         "firstName": {
           "type": "string",
@@ -631,11 +627,36 @@
       }
     },
     "TokenResponse": {
-      "required": ["token"],
+      "required": ["token", "user"],
       "properties": {
         "token": {
           "type": "string",
           "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        },
+        "user": {
+          "$ref": "#/commonDefinitions/CommonUserInfo"
+        }
+      }
+    },
+    "CommonUserInfo": {
+      "required": ["email", "birthday", "firstName", "lastName"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "daniel.apolo@gmail.com"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Daniel"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Apolonik"
+        },
+        "birthday": {
+          "type": "string",
+          "example": "2002-04-25T00:00:00.000Z"
         }
       }
     }
