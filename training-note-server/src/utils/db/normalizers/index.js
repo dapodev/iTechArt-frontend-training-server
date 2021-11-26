@@ -15,4 +15,14 @@ const normalizeSharedNoteList = (notes) =>
     return { id: _id, title, description, createdAt, updatedAt, author };
   });
 
-export { normalizeNoteList, normalizeNote, normalizeSharedNoteList };
+const normalizeUserInfo = (user) => {
+  const { email, firstName, lastName, birthday } = user;
+  return { email, firstName, lastName, birthday };
+};
+
+export {
+  normalizeNoteList,
+  normalizeNote,
+  normalizeSharedNoteList,
+  normalizeUserInfo,
+};

@@ -1,18 +1,22 @@
 import express from 'express';
+import { jwtAuth } from 'auth';
 
-import registerUserValidations from '../validations/registerUserValidations';
 import {
   getAllUsers,
   registerUser,
   updateUser,
   authentificateUser,
+  updatePassword,
 } from '../controllers';
-import updateUserValidations from '../validations/updateUserValidations';
+import {
+  updateUserValidations,
+  registerUserValidations,
+  updatePasswordValidations,
+} from '../validations';
 
 import connect from 'db/connection/connect';
 import commonErrorHandler from 'errors/handlers/commonErrorHandler';
 import internalErrorHandler from 'errors/handlers/internalErrorHandler';
-import { jwtAuth } from 'auth';
 
 const usersRouter = express.Router();
 
@@ -27,6 +31,8 @@ usersRouter.use(jwtAuth);
 usersRouter.get('/', getAllUsers);
 
 usersRouter.put('/', [updateUserValidations, updateUser]);
+
+usersRouter.put('/password', [updatePasswordValidations, updatePassword]);
 
 usersRouter.use([commonErrorHandler, internalErrorHandler]);
 

@@ -3,6 +3,7 @@ import User from '../models/User';
 import CommonError from 'errors/CommonError';
 import STATUS_CODES from 'modules/config/constants/statusCodes';
 import { generateMD5fromString } from 'utils/hash';
+import { normalizeUserInfo } from 'utils/db/normalizers';
 
 const getUserList = async () => {
   const notes = await User.find({}).select(
@@ -54,13 +55,29 @@ const getUserByEmail = async (userEmail) => {
 const updateUserInfo = async (user, data) => {
   const { firstName, lastName, birthday } = data;
 
-  const result = User.findOneAndUpdate(
+  const result = await User.findOneAndUpdate(
     { _id: user._id },
     { firstName, lastName, birthday },
     { new: true }
   );
 
-  return result;
+  return normalizeUserInfo(result);
 };
 
-export { getUserList, addUser, getUserByEmail, updateUserInfo };
+const updateUserPassword = async (user, password) => {
+  const result = await User.findOneAndUpdate(
+    { _id: user._id },
+    { password: password },
+    { new: true }
+  );
+
+  return normalizeUserInfo(result);
+};
+
+export {
+  getUserList,
+  addUser,
+  getUserByEmail,
+  updateUserInfo,
+  updateUserPassword,
+};
