@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.1.0",
+    "version": "2.2.0",
     "title": "iTechArt ReactJS training server",
     "description": "This NodeJS API was created to provide backend part for your ReactJS note application.",
     "license": {
@@ -384,6 +384,93 @@
             }
           }
         }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user's common info.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains updated user data.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/UpdateUserBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/UserResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users/password": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user's password.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains old & new passwords.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/UpdateUserPasswordBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/UserResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
       }
     },
 
@@ -657,6 +744,36 @@
         "birthday": {
           "type": "string",
           "example": "2002-04-25T00:00:00.000Z"
+        }
+      }
+    },
+    "UpdateUserBody": {
+      "required": ["firstName", "lastName", "birthday"],
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "Daniel"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Apolo"
+        },
+        "birthday": {
+          "type": "string",
+          "example": "2002-04-25T21:00:00.000Z"
+        }
+      }
+    },
+    "UpdateUserPasswordBody": {
+      "required": ["oldPassword", "newPassword"],
+      "properties": {
+        "oldPassword": {
+          "type": "string",
+          "example": "some0ldPassword"
+        },
+        "newPassword": {
+          "type": "string",
+          "example": "someNewPassw0rd"
         }
       }
     }
