@@ -8,6 +8,7 @@ import {
   NAME_PATTERN,
   PASSWORD_PATTERN,
 } from 'modules/notes/validations/constants';
+import { getServerCurrentDateTime } from 'utils/dateTime';
 
 export const generateErrors = () => {
   const errors = {};
@@ -112,6 +113,14 @@ export const validateDate = (dateString, required = false) => {
     if (Number.isNaN(parsed)) {
       result.isValid = false;
       result.message = 'Could not convert date value.';
+    } else {
+      const serverDateTime = getServerCurrentDateTime();
+      const providedDate = new Date(dateString);
+
+      if (providedDate > serverDateTime) {
+        result.isValid = false;
+        result.message = 'Provided datetime is incorrect.';
+      }
     }
   }
 

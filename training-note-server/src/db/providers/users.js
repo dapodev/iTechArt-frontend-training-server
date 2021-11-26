@@ -51,4 +51,16 @@ const getUserByEmail = async (userEmail) => {
   return user;
 };
 
-export { getUserList, addUser, getUserByEmail };
+const updateUserInfo = async (user, data) => {
+  const { firstName, lastName, birthday } = data;
+
+  const result = User.findOneAndUpdate(
+    { _id: user._id },
+    { firstName, lastName, birthday },
+    { new: true }
+  );
+
+  return result;
+};
+
+export { getUserList, addUser, getUserByEmail, updateUserInfo };
