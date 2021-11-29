@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.2.0",
+    "version": "2.2.1",
     "title": "iTechArt ReactJS training server",
     "description": "This NodeJS API was created to provide backend part for your ReactJS note application.",
     "license": {
@@ -374,7 +374,7 @@
           "200": {
             "description": "OK",
             "schema": {
-              "$ref": "#/commonDefinitions/TokenResponse"
+              "$ref": "#/commonDefinitions/AuthResponse"
             }
           },
           "400": {
@@ -477,13 +477,58 @@
     "/api/users/auth": {
       "get": {
         "tags": ["Authentification"],
-        "summary": "Authentification attempt. Returns user info if auth sucessed or an error message otherwise.",
+        "summary": "Authentification attempt. Returns user info, token and refresh token if auth sucessed or an error message otherwise.",
         "security": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains credentials.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/Credentials"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
             "schema": {
-              "type": "array",
+              "$ref": "#/commonDefinitions/AuthResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users/auth/refresh": {
+      "post": {
+        "tags": ["Authentification"],
+        "summary": "Refresh tokens attempt. Returns token and refresh token if auth sucessed or an error message otherwise.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains refresh token.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/RefreshToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
               "$ref": "#/commonDefinitions/TokenResponse"
             }
           },
@@ -491,6 +536,12 @@
             "description": "Unauthorized",
             "schema": {
               "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
             }
           }
         }
@@ -713,12 +764,38 @@
         "example": "apolo@gmail.com"
       }
     },
+    "RefreshToken": {
+      "required": ["refreshToken"],
+      "properties": {
+        "refreshToken": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        }
+      }
+    },
     "TokenResponse": {
-      "required": ["token", "user"],
+      "required": ["token", "refreshToken"],
       "properties": {
         "token": {
           "type": "string",
           "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        },
+        "refreshToken": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFdas8daXnNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        }
+      }
+    },
+    "AuthResponse": {
+      "required": ["token", "user", "refreshToken"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        },
+        "refreshToken": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFdas8daXnNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
         },
         "user": {
           "$ref": "#/commonDefinitions/CommonUserInfo"
@@ -774,6 +851,19 @@
         "newPassword": {
           "type": "string",
           "example": "someNewPassw0rd"
+        }
+      }
+    },
+    "Credentials": {
+      "required": ["email", "password"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "apolo@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "somepass"
         }
       }
     }
