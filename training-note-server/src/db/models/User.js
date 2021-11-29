@@ -12,6 +12,7 @@ const userSchema = mongoose.Schema({
       ref: 'Note',
     },
   ],
+  refreshToken: { type: String, default: null },
 });
 
 export default mongoose.model('User', userSchema);

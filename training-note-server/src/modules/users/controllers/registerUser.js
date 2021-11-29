@@ -1,5 +1,6 @@
+import generateRefreshToken from 'auth/generateRefreshToken';
 import generateToken from 'auth/generateToken';
-import { addUser } from 'db/providers/users';
+import { addUser, getUserByEmail, setRefreshToken } from 'db/providers/users';
 
 const registerUser = async (req, res, next) => {
   const { email, firstName, lastName, birthday, password } = req.body;
@@ -16,8 +17,12 @@ const registerUser = async (req, res, next) => {
     };
 
     const token = generateToken(newUser.email);
+    const refreshToken = generateRefreshToken(newUser.email);
 
-    const responsePayload = { token, user: userInfoPayload };
+    const user = await getUserByEmail(email);
+    await setRefreshToken(user, refreshToken);
+
+    const responsePayload = { token, refreshToken, user: userInfoPayload };
 
     res.json(responsePayload);
   } catch (err) {

@@ -1,6 +1,7 @@
 import { isAccessGranted } from 'auth/common';
+import generateRefreshToken from 'auth/generateRefreshToken';
 import generateToken from 'auth/generateToken';
-import { getUserByEmail } from 'db/providers/users';
+import { getUserByEmail, setRefreshToken } from 'db/providers/users';
 import CommonError from 'errors/CommonError';
 import STATUS_CODES from 'modules/config/constants/statusCodes';
 
@@ -28,8 +29,11 @@ const authentificateUser = async (req, res, next) => {
     const userInfoPayload = { email, birthday, firstName, lastName };
 
     const token = generateToken(email);
+    const refreshToken = generateRefreshToken(email);
 
-    const responsePayload = { token, user: userInfoPayload };
+    await setRefreshToken(user, refreshToken);
+
+    const responsePayload = { token, refreshToken, user: userInfoPayload };
 
     res.json(responsePayload);
   } catch (err) {
