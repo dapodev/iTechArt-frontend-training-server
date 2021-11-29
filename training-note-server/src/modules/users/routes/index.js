@@ -7,6 +7,7 @@ import {
   updateUser,
   authentificateUser,
   updatePassword,
+  refreshTokens,
 } from '../controllers';
 import {
   updateUserValidations,
@@ -25,6 +26,8 @@ usersRouter.use(connect);
 usersRouter.post('/', registerUserValidations, registerUser);
 
 usersRouter.post('/auth', authentificateUser);
+
+usersRouter.post('/auth/refresh', refreshTokens);
 
 usersRouter.use(jwtAuth);
 

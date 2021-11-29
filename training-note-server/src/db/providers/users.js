@@ -74,10 +74,18 @@ const updateUserPassword = async (user, password) => {
   return normalizeUserInfo(result);
 };
 
+const setRefreshToken = async (user, token) => {
+  user.refreshToken = token;
+  await user.save();
+
+  return token;
+};
+
 export {
   getUserList,
   addUser,
   getUserByEmail,
   updateUserInfo,
   updateUserPassword,
+  setRefreshToken,
 };
