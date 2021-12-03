@@ -1,0 +1,41 @@
+{
+  "name": "backend",
+  "version": "2.2.1",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel ./src -d build -s",
+    "build:dev": "npm run clean && babel ./src -d build -s",
+    "clean": "if exist build rd /s /q build",
+    "start": "npm run build && node ./build/app.js",
+    "dev": "npm run build:dev && node ./build/app.js",
+    "deploy": "git add . && git commit --allow-empty -m 'deploy' && git push heroku master -f"
+  },
+  "author": "apolo",
+  "license": "ISC",
+  "engines": {
+    "node": "14.16.0"
+  },
+  "dependencies": {
+    "@babel/cli": "^7.15.7",
+    "@babel/core": "^7.15.5",
+    "@babel/plugin-transform-runtime": "^7.15.8",
+    "@babel/preset-env": "^7.15.6",
+    "babel-plugin-module-resolver": "^4.1.0",
+    "basic-auth": "^2.0.1",
+    "cors": "^2.8.5",
+    "crypto": "^1.0.1",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.0.11",
+    "swagger-ui-express": "^4.1.6",
+    "tsscmp": "^1.0.6",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@babel/node": "^7.15.4",
+    "nodemon": "^2.0.13"
+  }
+}

@@ -1,0 +1,871 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "2.2.1",
+    "title": "iTechArt ReactJS training server",
+    "description": "This NodeJS API was created to provide backend part for your ReactJS note application.",
+    "license": {
+      "name": "MIT",
+      "url": "https://opensource.org/licenses/MIT"
+    }
+  },
+  "host": "note-app-training-server.herokuapp.com",
+  "basePath": "/",
+  "schemes": ["https"],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+
+  "securityDefinitions": {
+    "JWT": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header",
+      "description": "JWT auth token. Example: [Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbC...]"
+    }
+  },
+
+  "security": [
+    {
+      "JWT": []
+    }
+  ],
+
+  "paths": {
+    "/api/notes": {
+      "get": {
+        "tags": ["Notes"],
+        "summary": "Get one page of notes from DB.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Sequence number of the page of notes that we want to get from the server. Default value: 1",
+            "type": "integer"
+          },
+          {
+            "name": "name",
+            "in": "query",
+            "required": false,
+            "description": "Part(or the whole title) of note title that you want to get notes by. This parameter is used to filter notes by their title",
+            "type": "string"
+          },
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "required": false,
+            "description": "A date value represented as a string. This parameter is used to filter note by creation date.",
+            "type": "string"
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "required": false,
+            "description": "A date value represented as a string. This parameter is used to filter note by creation date.",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Note"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Notes"],
+        "summary": "Add a new note to DB.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that represents the note you want to add to database.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/PostAndUpdateNoteBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/PostAndUpdateResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/notes/{id}": {
+      "put": {
+        "tags": ["Notes"],
+        "summary": "Update some note values using ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "A note you want to update ID value.",
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that represents the new valuse of the note you want yo update in database.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/PostAndUpdateNoteBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/PostAndUpdateResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Notes"],
+        "summary": "Delete particular note by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "description": "The ID of the note you want to mark as deleted.",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/DeleteNoteResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/notes/share": {
+      "get": {
+        "tags": ["Notes"],
+        "summary": "Get the list of notes which other users shared with you.",
+        "parameters": [
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "description": "Sequence number of the page of notes that we want to get from the server. Default value: 1",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/commonDefinitions/GetSharedResponseBody"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/notes/share/{id}": {
+      "put": {
+        "tags": ["Notes"],
+        "summary": "Share the note with several users.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains 'users' field - array of emails of users to share the note with.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/UsersEmailsArrayObject"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/ArrayOfEmails"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get all users list.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/commonDefinitions/UserResponseBody"
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Register a new user.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains all the data about user.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/UserResponseBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/AuthResponse"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user's common info.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains updated user data.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/UpdateUserBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/UserResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users/password": {
+      "put": {
+        "tags": ["Users"],
+        "summary": "Update user's password.",
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains old & new passwords.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/UpdateUserPasswordBody"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/UserResponseBody"
+            }
+          },
+          "400": {
+            "description": "Invalid Request",
+            "schema": {
+              "$ref": "#/commonDefinitions/CommonResponse400"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users/auth": {
+      "get": {
+        "tags": ["Authentification"],
+        "summary": "Authentification attempt. Returns user info, token and refresh token if auth sucessed or an error message otherwise.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains credentials.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/Credentials"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/AuthResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          }
+        }
+      }
+    },
+
+    "/api/users/auth/refresh": {
+      "post": {
+        "tags": ["Authentification"],
+        "summary": "Refresh tokens attempt. Returns token and refresh token if auth sucessed or an error message otherwise.",
+        "security": [],
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "description": "An object that contains refresh token.",
+            "type": "object",
+            "schema": {
+              "$ref": "#/commonDefinitions/RefreshToken"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "$ref": "#/commonDefinitions/TokenResponse"
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/commonDefinitions/UnauthorizedError"
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "$ref": "#/commonDefinitions/ForbiddenError"
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "definitions": {
+    "Note": {
+      "required": ["id", "title", "description", "createdAt", "sharedWith"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "619559804621f90bbeae1a1a"
+        },
+        "title": {
+          "type": "string",
+          "example": "Text Jimmy on facebook"
+        },
+        "description": {
+          "type": "string",
+          "example": "Today I'm gonna finally text Jim about incoming party."
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2002-07-22T00:00:00.000Z"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2002-07-25T00:00:00.000Z"
+        },
+        "sharedWith": {
+          "type": "array",
+          "items": {
+            "$ref": "#/commonDefinitions/ArrayOfEmails"
+          }
+        }
+      }
+    },
+    "User": {
+      "required": [
+        "email",
+        "password",
+        "firstName",
+        "lastName",
+        "birthday",
+        "notes"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "daniel.apolo@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "13e8753558ed67e1f832655493058224"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Daniel"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Apolonik"
+        },
+        "birthday": {
+          "type": "string",
+          "example": "2002-04-25T00:00:00.000Z"
+        },
+        "notes": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Note"
+          }
+        }
+      }
+    }
+  },
+  "commonDefinitions": {
+    "UserResponseBody": {
+      "required": ["email", "firstName", "lastName", "birthday"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "daniel.apolo@gmail.com"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Daniel"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Apolonik"
+        },
+        "birthday": {
+          "type": "string",
+          "example": "2002-04-25T00:00:00.000Z"
+        }
+      }
+    },
+    "PostAndUpdateNoteBody": {
+      "required": ["title", "description"],
+      "properties": {
+        "title": {
+          "type": "string",
+          "example": "Updated title"
+        },
+        "description": {
+          "type": "string",
+          "example": "Some updated note content"
+        }
+      }
+    },
+    "PostAndUpdateResponseBody": {
+      "required": ["id", "title", "description", "createdAt"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "619559804621f90bbeae1a1a"
+        },
+        "title": {
+          "type": "string",
+          "example": "Text Jimmy on facebook"
+        },
+        "description": {
+          "type": "string",
+          "example": "Today I'm gonna finally text Jim about incoming party."
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2002-07-22T00:00:00.000Z"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2002-07-25T00:00:00.000Z"
+        }
+      }
+    },
+    "DeleteNoteResponseBody": {
+      "required": ["success", "id"],
+      "properties": {
+        "success": {
+          "type": "boolean"
+        },
+        "id": {
+          "type": "string",
+          "example": "61978398175a4d517602b064"
+        }
+      }
+    },
+    "CommonResponse400": {
+      "type": "string",
+      "example": "Could not convert provided data to particular data type"
+    },
+    "ForbiddenError": {
+      "type": "string",
+      "example": "Auth token is invalid"
+    },
+    "AuthBody": {
+      "required": ["email", "password"],
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      }
+    },
+    "GetSharedResponseBody": {
+      "required": ["id", "title", "description", "createdAt", "author"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "619559804621f90bbeae1a1a"
+        },
+        "title": {
+          "type": "string",
+          "example": "Text Jimmy on facebook"
+        },
+        "description": {
+          "type": "string",
+          "example": "Today I'm gonna finally text Jim about incoming party."
+        },
+        "createdAt": {
+          "type": "string",
+          "example": "2002-07-22T00:00:00.000Z"
+        },
+        "updatedAt": {
+          "type": "string",
+          "example": "2002-07-25T00:00:00.000Z"
+        },
+        "author": {
+          "type": "string",
+          "example": "apolo@gmail.com"
+        }
+      }
+    },
+    "UnauthorizedError": {
+      "type": "string",
+      "example": "Authorization error: invalid credentials"
+    },
+    "UsersEmailsArrayObject": {
+      "required": ["users"],
+      "properties": {
+        "users": {
+          "$ref": "#/commonDefinitions/ArrayOfEmails"
+        }
+      }
+    },
+    "ArrayOfEmails": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "example": "apolo@gmail.com"
+      }
+    },
+    "RefreshToken": {
+      "required": ["refreshToken"],
+      "properties": {
+        "refreshToken": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        }
+      }
+    },
+    "TokenResponse": {
+      "required": ["token", "refreshToken"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        },
+        "refreshToken": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFdas8daXnNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        }
+      }
+    },
+    "AuthResponse": {
+      "required": ["token", "user", "refreshToken"],
+      "properties": {
+        "token": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        },
+        "refreshToken": {
+          "type": "string",
+          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFdas8daXnNoYXJlLm5vdGVzQGdtYWlsLmNvbSIsImlhdCI6MTYzNzY4MTMzOCwiZXhwIjoxNjM3NjkyMTM4fQ.mQxkBmyknTUErUtZoT4zwleIMG5s4iqffY4xPxuhCRE"
+        },
+        "user": {
+          "$ref": "#/commonDefinitions/CommonUserInfo"
+        }
+      }
+    },
+    "CommonUserInfo": {
+      "required": ["email", "birthday", "firstName", "lastName"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "uniqueItems": true,
+          "example": "daniel.apolo@gmail.com"
+        },
+        "firstName": {
+          "type": "string",
+          "example": "Daniel"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Apolonik"
+        },
+        "birthday": {
+          "type": "string",
+          "example": "2002-04-25T00:00:00.000Z"
+        }
+      }
+    },
+    "UpdateUserBody": {
+      "required": ["firstName", "lastName", "birthday"],
+      "properties": {
+        "firstName": {
+          "type": "string",
+          "example": "Daniel"
+        },
+        "lastName": {
+          "type": "string",
+          "example": "Apolo"
+        },
+        "birthday": {
+          "type": "string",
+          "example": "2002-04-25T21:00:00.000Z"
+        }
+      }
+    },
+    "UpdateUserPasswordBody": {
+      "required": ["oldPassword", "newPassword"],
+      "properties": {
+        "oldPassword": {
+          "type": "string",
+          "example": "some0ldPassword"
+        },
+        "newPassword": {
+          "type": "string",
+          "example": "someNewPassw0rd"
+        }
+      }
+    },
+    "Credentials": {
+      "required": ["email", "password"],
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "apolo@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "somepass"
+        }
+      }
+    }
+  }
+}
